@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Savvy\Chat\Role;
 use SavvyAI\Traits\InteractsWithOpenAI;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Log;
  */
 class Dialogue extends Model
 {
+    use HasUuids;
     use HasFactory;
     use InteractsWithOpenAI;
 

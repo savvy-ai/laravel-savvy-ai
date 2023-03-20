@@ -2,10 +2,10 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Models\Agent;
 use SavvyAI\Models\Dialogue;
 use SavvyAI\Models\Trainable;
-use SavvyAI\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Chat extends Model
 {
+    use HasUuids;
     use HasFactory;
 
     protected $fillable = [

@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Message extends Model
 {
-    use HasFactory;
     use HasUuids;
+    use HasFactory;
 
     /**
      * Allows the message to tell agent if the conversation needs to remember the agent and dialogue.

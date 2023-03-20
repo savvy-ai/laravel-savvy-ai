@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Chatbot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Trainable extends Model
 {
+    use HasUuids;
     use HasFactory;
 
     protected $casts = [

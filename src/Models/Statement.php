@@ -2,11 +2,13 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Statement extends Model
 {
+    use HasUuids;
     use HasFactory;
 
     protected $fillable = [

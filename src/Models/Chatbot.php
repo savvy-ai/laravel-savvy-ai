@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 use SavvyAI\Exceptions\AgentNotFoundException;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Log;
  */
 class Chatbot extends Model
 {
+    use HasUuids;
     use HasFactory;
     use InteractsWithOpenAI;
 
