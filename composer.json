@@ -1,0 +1,47 @@
+{
+    "name": "savvy-ai/laravel-savvy-ai",
+    "version": "0.1.0",
+    "description": "Domain knowledge artificial intelligence framework for Laravel",
+    "keywords": [
+        "laravel",
+        "savvy-ai",
+        "artificial intelligence",
+        "domain knowledge",
+        "knowledge graph",
+        "ai"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "files": [
+            "./src/helpers.php"
+        ],
+        "psr-4": {
+            "SavvyAI\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Selvin Ortiz",
+            "email": "selvin@savvyai.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/console": "^10.0",
+        "illuminate/contracts": "^10.0",
+        "illuminate/support": "^10.0",
+        "openai-php/laravel": "^0.4.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["SavvyAI\\SavvyAIServiceProvider"]
+        }
+    }
+}
