@@ -5,7 +5,6 @@ namespace SavvyAI\Traits;
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Savvy\Chat\Message;
 use SavvyAI\Savvy\Chat\Reply;
-use OpenAI\Laravel\Facades\OpenAI;
 
 /**
  * Allows calls to the OpenAI API
@@ -20,7 +19,7 @@ trait InteractsWithOpenAI
      */
     public function call(array $messages = []): Reply
     {
-        $result = OpenAI::chat()->create([
+        $result = openai()->chat()->create([
             'model'             => $this->model,
             'max_tokens'        => $this->max_tokens,
             'temperature'       => $this->temperature,

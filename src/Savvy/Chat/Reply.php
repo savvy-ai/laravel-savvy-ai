@@ -4,8 +4,6 @@ namespace SavvyAI\Savvy\Chat;
 
 use SavvyAI\Models\Agent;
 use SavvyAI\Models\Dialogue;
-use SavvyAI\Exceptions\AgentNotFoundException;
-use SavvyAI\Exceptions\DialogueNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 /**

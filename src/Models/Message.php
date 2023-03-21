@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use SavvyAI\Savvy\Chat\Role;
 
 /**
  * @property \SavvyAI\Models\Chat $chat
@@ -16,14 +17,11 @@ class Message extends Model
     use HasUuids;
     use HasFactory;
 
-    /**
-     * Allows the message to tell agent if the conversation needs to remember the agent and dialogue.
-     *
-     * @var bool
-     */
     public $persistContext   = true;
     public $formattedAsReply = true;
     public $totalTokensUsed  = 0;
+
+    public ?Reply $reply = null;
 
     protected $casts = [
         'is_read' => 'boolean',
@@ -36,6 +34,15 @@ class Message extends Model
         'content',
         'media',
     ];
+
+    protected $appends = [
+        'reply',
+    ];
+
+    public function getReplyAttribute()
+    {
+        return $this->reply;
+    }
 
     public function chat(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -57,16 +64,25 @@ class Message extends Model
         $query->orderBy('created_at', 'asc');
     }
 
-    public function addToHistory(Reply $reply)
-    {
-        $this->totalTokensUsed += $reply->totalTokensUsed();
-    }
-
     public static function fromReply(Reply $reply): self
     {
-        return new Message([
+        $message = new Message([
             'role'    => $reply->role(),
             'content' => $reply->content(),
         ]);
+
+        $message->reply = $reply;
+
+        return $message;
+    }
+
+    public function role(): Role
+    {
+        return $this->role;
+    }
+
+    public function content(): string
+    {
+        return $this->content;
     }
 }

@@ -5,6 +5,7 @@ namespace SavvyAI\Savvy;
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 use SavvyAI\Models\Property;
+use SavvyAI\Models\Trainable;
 
 class Savvy
 {
@@ -17,13 +18,13 @@ class Savvy
      *
      * @return Message
      */
-    public function chat(Property $property, Chat $chat, Message $message): Message
+    public function chat(Trainable $trainable, Chat $chat, Message $message): Message
     {
-        $property->load(['user', 'chatbot.agents.dialogues']);
+        $trainable->load(['user', 'chatbot.agents.dialogues']);
 
-        $message = $property->chatbot->delegate($chat, $message);
+        $message = $trainable->chatbot->delegate($chat, $message);
 
-        // $property->user->subtractCredits($property->user->tokensToCredits('{totalTokens}'))->save();
+        // $trainable->user->subtractCredits($trainable->user->tokensToCredits('{totalTokens}'))->save();
 
         return $message;
     }

@@ -2,12 +2,12 @@
 
 namespace SavvyAI\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use OpenAI;
 use SavvyAI\Models\Chat;
-use SavvyAI\Models\Dialogue;
 use SavvyAI\Models\Message;
-use SavvyAI\Savvy\BaseDialogue;
+use SavvyAI\Models\Trainable;
+use SavvyAI\Savvy\Chat\Role;
 
 class ChatController extends Controller
 {
@@ -19,34 +19,24 @@ class ChatController extends Controller
      *
      * @return Message
      */
-    public function chat()
+    public function chat(Request $request)
     {
-        $role    = request()->input('role');
-        $content = request()->input('content');
+        $trainable = Trainable::where('id', $request->input('trainable_id'))
+            ->with('chatbot.agents.dialogues')
+            ->firstOrFail();
 
-        $message = [
-            'role'    => $role,
-            'content' => $content,
-        ];
+        $chat = $trainable->chats()
+            ->firstOrCreate(
+                ['id' => $request->input('chat_id')]
+            );
 
-        return (new BaseDialogue())->delegate([$message]);
+        $incomingMessage = new Message([
+            'role'    => Role::User->value,
+            'content' => $request->input('content'),
+        ]);
 
-        // $property->load(['user', 'chatbot.agents.dialogues']);
+        $outgoingMessage = $trainable->chatbot->delegate($chat, $incomingMessage);
 
-        // $message = $property->chatbot->delegate($chat, $message);
-
-        // $property->user->subtractCredits($property->user->tokensToCredits('{totalTokens}'))->save();
-
-        // $message = new Message([
-        //     'role'    => $role,
-        //     'content' => $content,
-        // ]);
-
-        // return $message;
-    }
-
-    public function config()
-    {
-        return config('savvy-ai');
+        return $outgoingMessage;
     }
 }

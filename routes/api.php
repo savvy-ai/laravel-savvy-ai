@@ -21,6 +21,5 @@ use SavvyAI\Http\Controllers\ChatController;
 // Route::post('whatsapp/{property:handle}', [WhatsAppController::class, 'ask'])->name('whatsapp.ask');
 
 Route::group(['prefix' => 'savvy'], function () {
-    Route::get('config', [ChatController::class, 'config'])->name('config');
     Route::post('chat', [ChatController::class, 'chat'])->name('chat');
 });
