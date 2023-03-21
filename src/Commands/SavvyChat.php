@@ -3,7 +3,7 @@
 namespace SavvyAI\Console\Commands;
 
 use SavvyAI\Models\Message;
-use SavvyAI\Savvy\Chat\Role;
+use SavvyAI\Chat\Role;
 use Illuminate\Console\Command;
 use SavvyAI\Models\Trainable;
 

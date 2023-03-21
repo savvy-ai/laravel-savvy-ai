@@ -1,6 +1,6 @@
 <?php
 
-namespace SavvyAI\Savvy\Chat;
+namespace SavvyAI\Chat;
 
 use SavvyAI\Models\Agent;
 use SavvyAI\Models\Dialogue;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
  *
  * Class Reply
  * @author Selvin Ortiz <selvin@savvhost.ai>
- * @package SavvyAI\Savvy\Chat
+ * @package SavvyAI\Chat
  */
 class Reply
 {

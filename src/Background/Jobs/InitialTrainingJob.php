@@ -2,8 +2,8 @@
 
 namespace SavvyAI\Jobs;
 
-use SavvyAI\Savvy\Config\TrainingConfig;
-use SavvyAI\Savvy\SavvyAI;
+use SavvyAI\Config\TrainingConfig;
+use SavvyAI\SavvyAI;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

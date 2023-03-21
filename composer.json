@@ -1,6 +1,6 @@
 {
     "name": "savvy-ai/laravel-savvy-ai",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Domain knowledge artificial intelligence framework for Laravel",
     "keywords": [
         "laravel",
@@ -34,7 +34,9 @@
         "symfony/http-client": "^6.2",
         "nyholm/psr7": "^1.5",
         "illuminate/database": "^10.4",
-        "illuminate/routing": "^10.4"
+        "illuminate/routing": "^10.4",
+        "twilio/sdk": "^7.0",
+        "pusher/pusher-php-server": "^7.2"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -45,7 +47,7 @@
     },
     "extra": {
         "laravel": {
-            "providers": ["SavvyAI\\ServiceProvider"]
+            "providers": ["SavvyAI\\Provider"]
         }
     }
 }

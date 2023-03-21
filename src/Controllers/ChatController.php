@@ -7,7 +7,7 @@ use Illuminate\Routing\Controller;
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 use SavvyAI\Models\Trainable;
-use SavvyAI\Savvy\Chat\Role;
+use SavvyAI\Chat\Role;
 
 class ChatController extends Controller
 {

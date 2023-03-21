@@ -14,12 +14,12 @@ use SavvyAI\Http\Controllers\ChatController;
 |
  */
 
-// Route::post('sms/webhook', [SmsController::class, 'webhook'])->name('sms.webhook');
-// Route::post('sms/{property:handle}', [SmsController::class, 'ask'])->name('sms.ask');
-
-// Route::post('whatsapp/webhook', [WhatsAppController::class, 'webhook'])->name('whatsapp.webhook');
-// Route::post('whatsapp/{property:handle}', [WhatsAppController::class, 'ask'])->name('whatsapp.ask');
-
 Route::group(['prefix' => 'savvy'], function () {
     Route::post('chat', [ChatController::class, 'chat'])->name('chat');
+
+    Route::post('sms/webhook', [SmsController::class, 'webhook'])->name('sms.webhook');
+    Route::post('sms/chat', [SmsController::class, 'chat'])->name('sms.chat');
+
+    Route::post('whatsapp/webhook', [WhatsAppController::class, 'webhook'])->name('whatsapp.webhook');
+    Route::post('whatsapp/chat', [WhatsAppController::class, 'chat'])->name('whatsapp.chat');
 });

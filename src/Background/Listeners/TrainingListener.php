@@ -4,7 +4,7 @@ namespace SavvyAI\Listeners;
 
 use SavvyAI\Events\TrainingEvent;
 use SavvyAI\Models\Property;
-use SavvyAI\Savvy\Config\TrainingConfig;
+use SavvyAI\Config\TrainingConfig;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

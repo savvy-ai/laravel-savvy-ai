@@ -1,6 +1,6 @@
 <?php
 
-namespace SavvyAI\Savvy\Base;
+namespace SavvyAI\Base;
 
 
 /**
@@ -8,7 +8,7 @@ namespace SavvyAI\Savvy\Base;
  *
  * Class Estimate
  * @author Selvin Ortiz <selvin@savvhost.ai>
- * @package SavvyAI\Savvy\Base
+ * @package SavvyAI\Base
  */
 class Estimate
 {

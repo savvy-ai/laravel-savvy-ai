@@ -4,8 +4,8 @@ namespace SavvyAI\Console\Commands;
 
 use SavvyAI\Models\Property;
 use SavvyAI\Models\User;
-use SavvyAI\Savvy\Config\TrainingConfig;
-use SavvyAI\Savvy\SavvyAI;
+use SavvyAI\Config\TrainingConfig;
+use SavvyAI\SavvyAI;
 use Illuminate\Console\Command;
 
 class SavvyTrain extends Command

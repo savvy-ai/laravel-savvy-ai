@@ -4,7 +4,7 @@ namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Exceptions\OffTopicException;
-use SavvyAI\Savvy\Chat\Role;
+use SavvyAI\Chat\Role;
 use SavvyAI\Traits\InteractsWithOpenAI;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

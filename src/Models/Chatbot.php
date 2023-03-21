@@ -9,7 +9,7 @@ use SavvyAI\Exceptions\AgentNotFoundException;
 use SavvyAI\Exceptions\DialogueNotFoundException;
 use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Savvy\Chat\Role;
+use SavvyAI\Chat\Role;
 use SavvyAI\Traits\InteractsWithOpenAI;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

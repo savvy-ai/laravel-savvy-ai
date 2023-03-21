@@ -2,12 +2,12 @@
 
 namespace SavvyAI\Models;
 
-use SavvyAI\Savvy\Chat\Reply;
+use SavvyAI\Chat\Reply;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use SavvyAI\Savvy\Chat\Role;
+use SavvyAI\Chat\Role;
 
 /**
  * @property \SavvyAI\Models\Chat $chat

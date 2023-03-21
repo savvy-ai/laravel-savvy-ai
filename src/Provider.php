@@ -5,18 +5,13 @@ namespace SavvyAI;
 use OpenAI;
 use OpenAI\Client;
 use SavvyAI\Exceptions\MissingApiKeyException;
-use SavvyAI\Savvy\Savvy;
+use SavvyAI\Savvy;
 
-class ServiceProvider extends \Illuminate\Support\ServiceProvider
+class Provider extends \Illuminate\Support\ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     */
     public function register()
     {
-        $this->app->singleton(Savvy::class, static fn () => new \SavvyAI\Savvy\Savvy());
+        $this->app->singleton(Savvy::class, static fn () => new \SavvyAI\Savvy());
         $this->app->singleton(Client::class, static function () {
             $key = config('savvy-ai.openai.key');
             $org = config('savvy-ai.openai.org');
@@ -33,11 +28,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->alias(Client::class, 'openai');
     }
 
-    /**
-     * Get the services provided by the provider (Lazy loaded).
-     *
-     * @return array
-     */
     public function provides()
     {
         return [
@@ -46,11 +36,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         ];
     }
 
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
     public function boot()
     {
         $this->registerPublishing();
@@ -63,9 +48,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         if ($this->app->runningInConsole())
         {
             $this->commands([
-                \SavvyAI\Console\Commands\SavvyEcho::class,
-                \SavvyAI\Console\Commands\SavvyChat::class,
-                \SavvyAI\Console\Commands\SavvyTrain::class,
+                \SavvyAI\Commands\SavvyChat::class,
+                \SavvyAI\Commands\SavvyTrain::class,
             ]);
         }
     }
@@ -84,9 +68,5 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'savvy-ai-migrations');
-
-        $this->publishes([
-            __DIR__.'/../database/seeders' => database_path('seeders'),
-        ], 'savvy-ai-seeders');
     }
 }

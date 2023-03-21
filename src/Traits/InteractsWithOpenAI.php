@@ -3,14 +3,14 @@
 namespace SavvyAI\Traits;
 
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Savvy\Chat\Message;
-use SavvyAI\Savvy\Chat\Reply;
+use SavvyAI\Chat\Message;
+use SavvyAI\Chat\Reply;
 
 /**
  * Allows calls to the OpenAI API
  *
  * @author Selvin Ortiz <selvin@savvyhost.ai>
- * @package SavvyAI\Savvy\Chat\Traits
+ * @package SavvyAI\Traits
  */
 trait InteractsWithOpenAI
 {

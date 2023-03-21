@@ -2,7 +2,7 @@
 
 namespace SavvyAI\Savvy;
 
-use SavvyAI\Savvy\Base\Reply;
+use SavvyAI\Base\Reply;
 use OpenAI\Laravel\Facades\OpenAI;
 
 /**

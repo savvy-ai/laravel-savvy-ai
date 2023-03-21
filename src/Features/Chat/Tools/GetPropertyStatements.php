@@ -1,11 +1,11 @@
 <?php
 
-namespace SavvyAI\Savvy\Chat\Tools;
+namespace SavvyAI\Chat\Tools;
 
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 use SavvyAI\Models\Statement;
-use SavvyAI\Savvy\Chat\Role;
+use SavvyAI\Chat\Role;
 use Illuminate\Support\Facades\Http;
 use OpenAI\Laravel\Facades\OpenAI;
 

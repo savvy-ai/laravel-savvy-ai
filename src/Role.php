@@ -1,6 +1,6 @@
 <?php
 
-namespace SavvyAI\Savvy\Chat;
+namespace SavvyAI\Chat;
 
 enum Role: string
 {

@@ -2,7 +2,7 @@
 
 if (!function_exists('savvy'))
 {
-    function savvy(): \SavvyAI\Savvy\Savvy
+    function savvy(): \SavvyAI\Savvy
     {
         return app('savvy');
     }
