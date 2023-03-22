@@ -20,7 +20,7 @@ class Trainable extends Model
 
     protected $casts = [
         'is_training'  => 'boolean',
-        'training_at'  => 'datetime',
+        'trained_at'   => 'datetime',
         'published_at' => 'datetime',
     ];
 
@@ -29,7 +29,6 @@ class Trainable extends Model
         'name',
         'handle',
         'is_training',
-        'credits_used',
         'trained_at',
         'published_at',
     ];

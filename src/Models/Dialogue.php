@@ -19,6 +19,20 @@ class Dialogue extends Model
     use HasFactory;
     use InteractsWithOpenAI;
 
+    protected $fillable = [
+        'agent_id',
+        'name',
+        'prompt',
+        'topic',
+        'classification',
+        'model',
+        'max_tokens',
+        'temperature',
+        'presence_penalty',
+        'frequency_penalty',
+        'stop'
+    ];
+
     public function agent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Agent::class);

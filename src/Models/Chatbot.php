@@ -26,6 +26,17 @@ class Chatbot extends Model
     use HasFactory;
     use InteractsWithOpenAI;
 
+    protected $fillable = [
+        'trainable_id',
+        'prompt',
+        'model',
+        'max_tokens',
+        'temperature',
+        'presence_penalty',
+        'frequency_penalty',
+        'stop'
+    ];
+
     public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Trainable::class);

@@ -13,7 +13,7 @@ class Statement extends Model
 
     protected $fillable = [
         'trainable_id',
-        'text',
+        'statement',
     ];
 
     public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo

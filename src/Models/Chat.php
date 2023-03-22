@@ -23,6 +23,8 @@ class Chat extends Model
     protected $fillable = [
         'handle',
         'trainable_id',
+        'agent_id',
+        'dialogue_id',
     ];
 
     public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany

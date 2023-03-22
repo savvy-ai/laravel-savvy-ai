@@ -21,6 +21,19 @@ class Agent extends Model
     use HasFactory;
     use InteractsWithOpenAI;
 
+    protected $fillable = [
+        'chatbot_id',
+        'name',
+        'prompt',
+        'classification',
+        'model',
+        'max_tokens',
+        'temperature',
+        'presence_penalty',
+        'frequency_penalty',
+        'stop'
+    ];
+
     public function chatbot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Chatbot::class);
