@@ -1,13 +1,13 @@
 <?php
 
-namespace SavvyAI\Base;
+namespace SavvyAI\Features\Training;
 
 
 /**
  * Represents a cost calculation from the the tokenizer
  *
  * Class Estimate
- * @author Selvin Ortiz <selvin@savvhost.ai>
+ * @author Selvin Ortiz <selvin@savvyai.com>
  * @package SavvyAI\Base
  */
 class Estimate

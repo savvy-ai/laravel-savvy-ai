@@ -4,7 +4,7 @@ namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Exceptions\DialogueNotFoundException;
-use SavvyAI\Chat\Role;
+use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Traits\InteractsWithOpenAI;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -59,7 +59,7 @@ class Agent extends Model
                     ['role' => Role::User->value, 'content' => $incomingMessage->content],
                 ]);
 
-                if ($reply->unknown() || !($dialogue = $reply->dialogue()))
+                if ($reply->isContextUnknown() || !($dialogue = $reply->dialogue()))
                 {
                     throw new DialogueNotFoundException($reply->content());
                 }

@@ -9,7 +9,7 @@ use SavvyAI\Exceptions\AgentNotFoundException;
 use SavvyAI\Exceptions\DialogueNotFoundException;
 use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Chat\Role;
+use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Traits\InteractsWithOpenAI;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -67,7 +67,7 @@ class Chatbot extends Model
                     ['role' => Role::User->value, 'content' => $incomingMessage->content],
                 ]);
 
-                if ($reply->unknown() || !($agent = $reply->agent()))
+                if ($reply->isContextunknown() || !($agent = $reply->agent()))
                 {
                     throw new AgentNotFoundException($reply->content());
                 }

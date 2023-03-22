@@ -1,11 +1,10 @@
 <?php
 
-namespace SavvyAI\Chat\Tools;
+namespace SavvyAI\Features\Chatting\Tools;
 
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
-use SavvyAI\Models\Property;
-use SavvyAI\Chat\Role;
+use SavvyAI\Features\Role;
 
 class GetCurrentTime
 {

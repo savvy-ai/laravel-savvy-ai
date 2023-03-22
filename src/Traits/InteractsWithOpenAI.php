@@ -3,8 +3,8 @@
 namespace SavvyAI\Traits;
 
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Chat\Message;
-use SavvyAI\Chat\Reply;
+use SavvyAI\Features\Chatting\Message;
+use SavvyAI\Features\Chatting\Reply;
 
 /**
  * Allows calls to the OpenAI API
@@ -31,7 +31,7 @@ trait InteractsWithOpenAI
 
         $reply = new Reply($result);
 
-        if ($reply->unknown())
+        if ($reply->isContextUnknown())
         {
             throw new UnknownContextException($reply->content());
         }

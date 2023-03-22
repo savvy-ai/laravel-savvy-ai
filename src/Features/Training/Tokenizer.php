@@ -1,6 +1,6 @@
 <?php
 
-namespace SavvyAI\Savvy;
+namespace SavvyAI\Features\Training;
 
 use Gioni06\Gpt3Tokenizer\Gpt3Tokenizer;
 use Gioni06\Gpt3Tokenizer\Gpt3TokenizerConfig;
@@ -13,7 +13,7 @@ use Gioni06\Gpt3Tokenizer\Gpt3TokenizerConfig;
  * If the text exceeds the threshhold, it can be split into smaller segments by the Segmenter class.
  *
  * Class Tokenizer
- * @author Selvin Ortiz <selvin@savvhost.ai>
+ * @author Selvin Ortiz <selvin@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Tokenizer

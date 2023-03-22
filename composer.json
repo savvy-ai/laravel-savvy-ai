@@ -36,7 +36,11 @@
         "illuminate/database": "^10.4",
         "illuminate/routing": "^10.4",
         "twilio/sdk": "^7.0",
-        "pusher/pusher-php-server": "^7.2"
+        "pusher/pusher-php-server": "^7.2",
+        "laravel/helpers": "^1.6",
+        "illuminate/events": "^10.4",
+        "illuminate/queue": "^10.4",
+        "illuminate/broadcasting": "^10.4"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

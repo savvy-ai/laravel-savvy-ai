@@ -4,7 +4,7 @@ namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Exceptions\OffTopicException;
-use SavvyAI\Chat\Role;
+use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Traits\InteractsWithOpenAI;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -94,7 +94,7 @@ class Dialogue extends Model
                 ['role' => Role::Assistant->value, 'content' => $outgoingMessage->content],
             ]);
 
-            if ($reply->onTopic())
+            if ($reply->isOnTopic())
             {
                 Log::debug('Dialogue::delegate() -> reply is on topic');
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace SavvyAI\Console\Commands;
+namespace SavvyAI\Commands;
 
-use SavvyAI\Models\Message;
-use SavvyAI\Chat\Role;
 use Illuminate\Console\Command;
+use SavvyAI\Features\Chatting\Role;
+use SavvyAI\Models\Message;
 use SavvyAI\Models\Trainable;
 
 class SavvyChat extends Command
@@ -47,6 +47,11 @@ class SavvyChat extends Command
         while(true)
         {
             $prompt = $this->ask('User');
+
+            if ($prompt === 'exit')
+            {
+                break;
+            }
 
             $message = $trainable->chatbot->delegate($chat, new Message([
                     'role' => Role::User->value,

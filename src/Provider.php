@@ -2,6 +2,7 @@
 
 namespace SavvyAI;
 
+use Illuminate\Support\Facades\Config;
 use OpenAI;
 use OpenAI\Client;
 use SavvyAI\Exceptions\MissingApiKeyException;
@@ -13,8 +14,8 @@ class Provider extends \Illuminate\Support\ServiceProvider
     {
         $this->app->singleton(Savvy::class, static fn () => new \SavvyAI\Savvy());
         $this->app->singleton(Client::class, static function () {
-            $key = config('savvy-ai.openai.key');
-            $org = config('savvy-ai.openai.org');
+            $key = Config::get('savvy-ai.openai.key');
+            $org = Config::get('savvy-ai.openai.org');
 
             if (! is_string($key) || ($org !== null && ! is_string($org)))
             {

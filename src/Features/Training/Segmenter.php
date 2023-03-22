@@ -1,6 +1,6 @@
 <?php
 
-namespace SavvyAI\Savvy;
+namespace SavvyAI\Features\Training;
 
 use Illuminate\Support\Facades\Log;
 
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
  * Splitting the text into smaller segments allows us to send multiple requests to the API.
  *
  * Class Segmenter
- * @author Selvin Ortiz <selvin@savvhost.ai>
+ * @author Selvin Ortiz <selvin@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Segmenter

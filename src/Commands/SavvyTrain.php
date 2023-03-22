@@ -1,11 +1,7 @@
 <?php
 
-namespace SavvyAI\Console\Commands;
+namespace SavvyAI\Commands;
 
-use SavvyAI\Models\Property;
-use SavvyAI\Models\User;
-use SavvyAI\Config\TrainingConfig;
-use SavvyAI\SavvyAI;
 use Illuminate\Console\Command;
 
 class SavvyTrain extends Command
@@ -32,15 +28,15 @@ class SavvyTrain extends Command
     public function handle()
     {
         $text  = file_get_contents($this->argument('file'));
-        $savvy = new SavvyAI();
+        // $savvy = new SavvyAI();
 
-        $savvy->train($text, new TrainingConfig([
-            'user' => User::first(),
-            'property' => Property::first() ?? new Property(['id' => 123456]),
-            'metadata' => [
-                'property_id' => Property::first()->id ?? 123456,
-            ],
-        ]));
+        // $savvy->train($text, new TrainingConfig([
+        //     'user' => User::first(),
+        //     'property' => Property::first() ?? new Property(['id' => 123456]),
+        //     'metadata' => [
+        //         'property_id' => Property::first()->id ?? 123456,
+        //     ],
+        // ]));
 
         $this->info('👍');
 

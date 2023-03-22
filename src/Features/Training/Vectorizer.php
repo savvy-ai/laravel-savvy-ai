@@ -1,6 +1,6 @@
 <?php
 
-namespace SavvyAI\Savvy;
+namespace SavvyAI\Features\Training;
 
 use SavvyAI\Models\Statement;
 use Illuminate\Support\Facades\Http;
@@ -11,7 +11,7 @@ use OpenAI\Laravel\Facades\OpenAI;
  * Turns text statements into vectors using the OpenAI embeddings API and the Pinecone API.
  *
  * Class Vectorizer
- * @author Selvin Ortiz <selvin@savvhost.ai>
+ * @author Selvin Ortiz <selvin@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Vectorizer

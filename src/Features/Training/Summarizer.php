@@ -1,6 +1,6 @@
 <?php
 
-namespace SavvyAI\Savvy;
+namespace SavvyAI\Features\Training;
 
 use SavvyAI\Base\Reply;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -12,7 +12,7 @@ use OpenAI\Laravel\Facades\OpenAI;
  * These statements wil be ready to be turned into vectors by the Vectorizer class.
  *
  * Class Summarizer
- * @author Selvin Ortiz <selvin@savvhost.ai>
+ * @author Selvin Ortiz <selvin@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Summarizer

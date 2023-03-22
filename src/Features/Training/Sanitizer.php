@@ -1,12 +1,12 @@
 <?php
 
-namespace SavvyAI\Savvy;
+namespace SavvyAI\Features\Training;
 
 /**
  * Sanitizes text.
  *
  * Class Sanitizer
- * @author Selvin Ortiz <selvin@savvhost.ai>
+ * @author Selvin Ortiz <selvin@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Sanitizer

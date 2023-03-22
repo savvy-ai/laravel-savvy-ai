@@ -10,3 +10,5 @@ docs
 phpunit.xml
 psalm.xml
 vendor
+bootstrap
+artisan
