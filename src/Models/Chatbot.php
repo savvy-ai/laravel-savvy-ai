@@ -37,6 +37,10 @@ class Chatbot extends Model
         'stop'
     ];
 
+    protected $appends = [
+        'name'
+    ];
+
     public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Trainable::class);
@@ -45,6 +49,11 @@ class Chatbot extends Model
     public function agents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Agent::class);
+    }
+
+    public function dialogues(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(Dialogue::class, Agent::class);
     }
 
     public function preparePrompt()
@@ -117,5 +126,10 @@ class Chatbot extends Model
 
             return $this->prepareFallbackMessage();
         }
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->trainable->name . ' Chatbot';
     }
 }

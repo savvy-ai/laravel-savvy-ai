@@ -33,6 +33,11 @@ class Dialogue extends Model
         'stop'
     ];
 
+    public function chatbot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->agent->chatbot();
+    }
+
     public function agent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Agent::class);
