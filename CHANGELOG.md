@@ -2,6 +2,12 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.1.1] - 2023-03-22
+
+### Added
+- Added model properties such as fillables and casts to improve integration with fillament and fix mass assignment issues
+
+---
 ## [0.1.0] - 2023-03-22
 
 ### Added
