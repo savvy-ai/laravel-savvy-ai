@@ -69,5 +69,9 @@ class Provider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'savvy-ai-migrations');
+
+        $this->publishes([
+            __DIR__.'/../filament/Resources' => app_path('Filament/Resources'),
+        ], 'savvy-ai-filament');
     }
 }

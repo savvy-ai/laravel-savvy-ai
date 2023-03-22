@@ -53,5 +53,8 @@
         "laravel": {
             "providers": ["SavvyAI\\Provider"]
         }
+    },
+    "require-dev": {
+        "filament/filament": "^2.17"
     }
 }
