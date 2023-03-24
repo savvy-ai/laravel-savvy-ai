@@ -52,6 +52,8 @@ class Provider extends \Illuminate\Support\ServiceProvider
                 \SavvyAI\Commands\SavvyChat::class,
                 \SavvyAI\Commands\SavvyTrain::class,
                 \SavvyAI\Commands\Test\SavvyClassify::class,
+                \SavvyAI\Commands\Test\SavvyValidate::class,
+                \SavvyAI\Commands\Test\SavvyChat::class,
             ]);
         }
     }

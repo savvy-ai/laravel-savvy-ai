@@ -21,7 +21,7 @@ trait InteractsWithOpenAI
     protected $temperature      = 0.0;
     protected $frequencyPenalty = 0.0;
     protected $presencePenalty  = 0.0;
-    protected $stop             = null;
+    protected $stop             = ' ';
 
     protected string $classificationPrompt = <<<'EOT'
 Carefully classify the text to find the correct delegate.
@@ -51,7 +51,7 @@ EOT;
      *
      * @return Reply
      */
-    public function classify(string $text, array $subjects = []): Reply
+    public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): Reply
     {
         $prompt = Blade::render($this->classificationPrompt, compact('subjects'));
 
@@ -76,7 +76,7 @@ EOT;
 
         $reply = new Reply($result);
 
-        if ($reply->isContextUnknown())
+        if ($reply->isContextUnknown($expectedStringInReply))
         {
             throw new UnknownContextException($reply->content());
         }
@@ -91,7 +91,7 @@ EOT;
      *
      * @return Reply
      */
-    public function validate(string $topic): Reply
+    public function validate(string $text, string $topic): Reply
     {
         $result = openai()->chat()->create([
             'model'             => $this->model,
@@ -103,7 +103,11 @@ EOT;
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => Blade::compileString($this->topicValidationPrompt, compact('topic')),
+                    'content' => Blade::render($this->topicValidationPrompt, compact('topic')),
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $text,
                 ]
             ],
         ]);
@@ -121,7 +125,7 @@ EOT;
     /**
      * @param Message[]
      */
-    public function call(array $messages = []): Reply
+    public function chat(array $messages = []): Reply
     {
         $result = openai()->chat()->create([
             'model'             => $this->model,

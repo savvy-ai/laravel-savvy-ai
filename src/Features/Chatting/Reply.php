@@ -49,17 +49,17 @@ class Reply
         return $this->message['content'] ?? '';
     }
 
-    public function isContextUnknown(): bool
+    public function isContextUnknown(string $expected = null): bool
     {
         if (Str::contains($this->content(), '@Unknown', true))
         {
-            $this->message['content'] = '*'.$this->content();
-
             return true;
         }
 
-        if (!Str::contains($this->content(), '@', true))
+        if (!empty($expected) && !Str::contains($this->content(), '@', true))
         {
+            $this->message['content'] = '*@Unknown()';
+
             return true;
         }
 
