@@ -1,26 +1,26 @@
 <?php
 
-namespace SavvyAI\Commands\Test;
+namespace SavvyAI\Commands\Test\Chatting;
 
 use Illuminate\Console\Command;
-use SavvyAI\Dummy;
+use SavvyAI\DummyForChatting;
 use SavvyAI\Exceptions\UnknownContextException;
 
-class SavvyChat extends Command
+class SavvyClassify extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'savvy:test:chat';
+    protected $signature = 'savvy:test:classify';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Start a chat session in a loop';
+    protected $description = 'Classify text into a subject or unknown in a loop';
 
     /**
      * Execute the console command.
@@ -29,13 +29,6 @@ class SavvyChat extends Command
      */
     public function handle()
     {
-        $history = [
-            [
-                'role' => 'system',
-                'content' => 'You are a vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Your name is Savvy and you speak broken english.',
-            ]
-        ];
-
         while(true)
         {
             $input = $this->ask('Input') ?? '';
@@ -45,16 +38,17 @@ class SavvyChat extends Command
                 break;
             }
 
-            $history[] = [
-                'role' => 'user',
-                'content' => $input,
-            ];
-
             try
             {
-                $output = (new Dummy(['stop' => null,  'maxTokens' => 256]))
-                    ->chat($history)
-                    ->content();
+                $output = (new DummyForChatting())->classify(
+                    $input,
+                    [
+                        'If the text is about a thing, you MUST say "@Thing()"',
+                        'If the text is about a place, you MUST say "@Place()"',
+                        'If the text is about a person, you MUST say "@Person()"',
+                    ],
+                    '@',
+                )->content();
             }
             catch (UnknownContextException $e)
             {

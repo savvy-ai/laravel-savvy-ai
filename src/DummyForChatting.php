@@ -4,7 +4,7 @@ namespace SavvyAI;
 
 use SavvyAI\Traits\InteractsWithOpenAI;
 
-class Dummy
+class DummyForChatting
 {
     use InteractsWithOpenAI;
 

@@ -8,7 +8,7 @@ use SavvyAI\Features\Chatting\Message;
 use SavvyAI\Features\Chatting\Reply;
 
 /**
- * Makes calls of specific type to the OpenAI API
+ * Makes calls to the OpenAI API to classify text, validate replies, and to chat
  *
  * @author Selvin Ortiz <selvin@savvyai.com>
  * @author Brennen Phippen <brennen@savvyai.com>

@@ -51,9 +51,10 @@ class Provider extends \Illuminate\Support\ServiceProvider
             $this->commands([
                 \SavvyAI\Commands\SavvyChat::class,
                 \SavvyAI\Commands\SavvyTrain::class,
-                \SavvyAI\Commands\Test\SavvyClassify::class,
-                \SavvyAI\Commands\Test\SavvyValidate::class,
-                \SavvyAI\Commands\Test\SavvyChat::class,
+                \SavvyAI\Commands\Test\Chatting\SavvyClassify::class,
+                \SavvyAI\Commands\Test\Chatting\SavvyValidate::class,
+                \SavvyAI\Commands\Test\Chatting\SavvyChat::class,
+                \SavvyAI\Commands\Test\Training\SavvySummarize::class,
             ]);
         }
     }

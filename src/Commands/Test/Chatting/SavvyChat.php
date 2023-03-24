@@ -1,26 +1,26 @@
 <?php
 
-namespace SavvyAI\Commands\Test;
+namespace SavvyAI\Commands\Test\Chatting;
 
 use Illuminate\Console\Command;
-use SavvyAI\Dummy;
+use SavvyAI\DummyForChatting;
 use SavvyAI\Exceptions\UnknownContextException;
 
-class SavvyClassify extends Command
+class SavvyChat extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'savvy:test:classify';
+    protected $signature = 'savvy:test:chat';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Classify text into a subject or unknown in a loop';
+    protected $description = 'Start a chat session in a loop';
 
     /**
      * Execute the console command.
@@ -29,6 +29,13 @@ class SavvyClassify extends Command
      */
     public function handle()
     {
+        $history = [
+            [
+                'role' => 'system',
+                'content' => 'You are a vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Your name is Savvy and you speak broken english.',
+            ]
+        ];
+
         while(true)
         {
             $input = $this->ask('Input') ?? '';
@@ -38,17 +45,16 @@ class SavvyClassify extends Command
                 break;
             }
 
+            $history[] = [
+                'role' => 'user',
+                'content' => $input,
+            ];
+
             try
             {
-                $output = (new Dummy())->classify(
-                    $input,
-                    [
-                        'If the text is about a thing, you MUST say "@Thing()"',
-                        'If the text is about a place, you MUST say "@Place()"',
-                        'If the text is about a person, you MUST say "@Person()"',
-                    ],
-                    '@',
-                )->content();
+                $output = (new DummyForChatting(['stop' => null,  'maxTokens' => 256]))
+                    ->chat($history)
+                    ->content();
             }
             catch (UnknownContextException $e)
             {

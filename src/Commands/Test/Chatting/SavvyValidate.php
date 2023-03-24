@@ -1,9 +1,9 @@
 <?php
 
-namespace SavvyAI\Commands\Test;
+namespace SavvyAI\Commands\Test\Chatting;
 
 use Illuminate\Console\Command;
-use SavvyAI\Dummy;
+use SavvyAI\DummyForChatting;
 use SavvyAI\Exceptions\UnknownContextException;
 
 class SavvyValidate extends Command
@@ -34,7 +34,7 @@ class SavvyValidate extends Command
 
         try
         {
-            $output = (new Dummy())->validate(
+            $output = (new DummyForChatting())->validate(
                 $text,
                 $topic,
             )->content();

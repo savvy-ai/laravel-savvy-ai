@@ -18,7 +18,7 @@ class SavvyTrain extends Command
      *
      * @var string
      */
-    protected $description = 'Train model using a text file with domain knowledge.';
+    protected $description = 'Train a trainable using a text file with domain knowledge.';
 
     /**
      * Execute the console command.
