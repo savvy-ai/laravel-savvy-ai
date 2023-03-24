@@ -14,6 +14,7 @@ use Gioni06\Gpt3Tokenizer\Gpt3TokenizerConfig;
  *
  * Class Tokenizer
  * @author Selvin Ortiz <selvin@savvyai.com>
+ * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Tokenizer

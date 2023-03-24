@@ -2,9 +2,10 @@
 
 namespace SavvyAI\Features\Chatting;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use SavvyAI\Models\Agent;
 use SavvyAI\Models\Dialogue;
-use Illuminate\Support\Facades\Log;
 use SavvyAI\Models\Message;
 
 /**
@@ -13,6 +14,7 @@ use SavvyAI\Models\Message;
  * Class Reply
  *
  * @author Selvin Ortiz <selvin@savvyai.com>
+ * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Chat
  */
 class Reply
@@ -49,7 +51,19 @@ class Reply
 
     public function isContextUnknown(): bool
     {
-        return mb_stripos($this->content(), '@Unknown') !== false;
+        if (Str::contains($this->content(), '@Unknown', true))
+        {
+            $this->message['content'] = '*'.$this->content();
+
+            return true;
+        }
+
+        if (!Str::contains($this->content(), '@', true))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public function isOnTopic(): bool

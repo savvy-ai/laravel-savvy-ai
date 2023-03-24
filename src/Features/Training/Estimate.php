@@ -8,6 +8,7 @@ namespace SavvyAI\Features\Training;
  *
  * Class Estimate
  * @author Selvin Ortiz <selvin@savvyai.com>
+ * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Base
  */
 class Estimate

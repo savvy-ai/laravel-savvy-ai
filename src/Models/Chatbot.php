@@ -15,12 +15,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Log;
+use SavvyAI\Contracts\Delegatable;
 
 /**
  * @property \SavvyAI\Models\Trainable $trainable
  * @property \SavvyAI\Models\Agent[] $agents
  */
-class Chatbot extends Model
+class Chatbot extends Model implements Delegatable
 {
     use HasUuids;
     use HasFactory;
@@ -41,19 +42,9 @@ class Chatbot extends Model
         'name'
     ];
 
-    public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function delegates(): array
     {
-        return $this->belongsTo(Trainable::class);
-    }
-
-    public function agents(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(Agent::class);
-    }
-
-    public function dialogues(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
-    {
-        return $this->hasManyThrough(Dialogue::class, Agent::class);
+        return $this->agents;
     }
 
     public function preparePrompt()
@@ -87,10 +78,7 @@ class Chatbot extends Model
                     ['role' => Role::User->value, 'content' => $incomingMessage->content],
                 ]);
 
-                if ($reply->isContextunknown() || !($agent = $reply->agent()))
-                {
-                    throw new AgentNotFoundException($reply->content());
-                }
+                $agent = $reply->agent();
             }
 
             Log::debug('Bot::delegate() -> delegating to agent: ' . $agent->name);
@@ -131,5 +119,20 @@ class Chatbot extends Model
     public function getNameAttribute(): string
     {
         return $this->trainable->name . ' Chatbot';
+    }
+
+    public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Trainable::class);
+    }
+
+    public function agents(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Agent::class);
+    }
+
+    public function dialogues(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(Dialogue::class, Agent::class);
     }
 }

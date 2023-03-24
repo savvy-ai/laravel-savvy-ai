@@ -7,6 +7,7 @@ namespace SavvyAI\Features\Training;
  *
  * Class Sanitizer
  * @author Selvin Ortiz <selvin@savvyai.com>
+ * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Sanitizer

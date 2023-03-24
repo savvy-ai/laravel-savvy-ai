@@ -13,6 +13,7 @@ use OpenAI\Laravel\Facades\OpenAI;
  *
  * Class Summarizer
  * @author Selvin Ortiz <selvin@savvyai.com>
+ * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Summarizer

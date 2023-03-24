@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
  *
  * Class Segmenter
  * @author Selvin Ortiz <selvin@savvyai.com>
+ * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Savvy
  */
 class Segmenter

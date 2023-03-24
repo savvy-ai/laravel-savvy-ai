@@ -7,7 +7,8 @@ namespace SavvyAI\Exceptions;
  *
  * Class OffTopicException
  *
- * @author Selvin Ortiz <selvin@savvyhost.ai>
+ * @author Selvin Ortiz <selvin@savvyai.com>
+ * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Exceptions
  */
 class OffTopicException extends \Exception

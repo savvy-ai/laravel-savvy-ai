@@ -4,7 +4,7 @@ namespace SavvyAI\Features\Chatting\Tools;
 
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
-use SavvyAI\Chat\Role;
+use SavvyAI\Features\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
