@@ -4,6 +4,8 @@ namespace SavvyAI\Traits;
 
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\Reply;
+use Vanderlee\Sentence\Sentence;
+use OpenAI\Responses\Embeddings\CreateResponse;
 
 /**
  * Makes calls to the OpenAI API to vectorize and summarize text for training purposes
@@ -36,36 +38,63 @@ EOT;
     /**
      * @throws UnknownContextException
      *
-     * @return Reply
+     * @return array
      */
-    public function summarize(string $text): Reply
+    public function summarize(string $text, int $minLength = 16, int $maxLength = 256): array
     {
-        $result = openai()->chat()->create([
-            'model'             => $this->model,
-            'max_tokens'        => $this->maxTokens,
-            'temperature'       => $this->temperature,
-            'presence_penalty'  => $this->presencePenalty,
-            'frequency_penalty' => $this->frequencyPenalty,
-            'stop'              => $this->stop ?? null,
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => $this->summarizingPrompt,
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $text,
-                ]
-            ],
-        ]);
+        $sentences = (new Sentence())->split($text, Sentence::SPLIT_TRIM);
 
-        $reply = new Reply($result);
+        $mergedSentences = [];
+        $lastSentences   = [];
 
-        if ($reply->isContextUnknown())
+        while(!empty($sentences))
         {
-            throw new UnknownContextException($reply->content());
+            $sentence = $currentSentence = array_shift($sentences);
+
+            if (!empty($lastSentences))
+            {
+                $sentence = implode(' ', $lastSentences) . ' ' . $sentence;
+            }
+
+            if (mb_strlen($sentence) < $minLength)
+            {
+                $lastSentences[] = $currentSentence;
+
+                continue;
+            }
+
+            if (mb_strlen($sentence) > $maxLength)
+            {
+                array_unshift($sentences, $currentSentence);
+
+                $sentence = implode(' ', $lastSentences);
+            }
+
+            $lastSentences     = [];
+            $mergedSentences[] = $sentence;
         }
 
-        return $reply;
+        return $mergedSentences;
+    }
+
+    public function vectorize(array $sentences): array
+    {
+        $response = openai()->embeddings()->create([
+            'model' => 'text-embedding-ada-002',
+            'input' => $sentences,
+        ]);
+
+        $vectors = [];
+
+        foreach ($response->embeddings as $embedding)
+        {
+            $vectors[] = [
+                'id'       => $embedding->index,
+                'values'   => $embedding->embedding,
+                'sentence' => $sentences[$embedding->index],
+            ];
+        }
+
+        return $vectors;
     }
 }

@@ -123,6 +123,21 @@ EOT;
     }
 
     /**
+     * @param string $text
+     *
+     * @return array<int, float>
+     */
+    public function vectorize(string $text): array
+    {
+        $response = openai()->embeddings()->create([
+            'model' => 'text-embedding-ada-002',
+            'input' => $text,
+        ]);
+
+        return $response->embeddings[0]->embedding;
+    }
+
+    /**
      * @param Message[]
      */
     public function chat(array $messages = []): Reply

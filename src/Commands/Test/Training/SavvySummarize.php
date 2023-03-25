@@ -4,7 +4,6 @@ namespace SavvyAI\Commands\Test\Training;
 
 use Illuminate\Console\Command;
 use SavvyAI\DummyForTraining;
-use SavvyAI\Exceptions\UnknownContextException;
 
 class SavvySummarize extends Command
 {
@@ -29,6 +28,8 @@ class SavvySummarize extends Command
      */
     public function handle()
     {
+        $dummy = new DummyForTraining();
+
         $file = $this->argument('file') ?? '';
 
         if (!is_readable($file))
@@ -40,19 +41,13 @@ class SavvySummarize extends Command
 
         $text = file_get_contents($file);
 
-        try
-        {
-            $reply = (new DummyForTraining(['maxTokens' => 2000]))->summarize($text);
-        }
-        catch (UnknownContextException $e)
-        {
-            $this->error('Output: ' . $e->getMessage());
+        $sentences = $dummy->summarize($text, 128, 512);
+        $vectors   = $dummy->vectorize($sentences);
+        $memorized = $dummy->memorize($vectors, 'savvy-ai-test', ['test' => 'test']);
 
-            return Command::FAILURE;
-        }
+        $this->comment(print_r($memorized, true));
 
-        $this->comment('Tokens used: '. $reply->totalTokensUsed());
-        $this->comment(print_r(explode(PHP_EOL, $reply->content()), true));
+        // $this->comment(print_r(collect($vectors)->map(fn($vector) => [$vector['id'], $vector['sentence']])->toArray(), true));
 
         return Command::SUCCESS;
     }

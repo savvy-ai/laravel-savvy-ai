@@ -39,7 +39,8 @@
         "symfony/http-client": "^6.2",
         "nyholm/psr7": "^1.5",
         "twilio/sdk": "^7.0",
-        "pusher/pusher-php-server": "^7.2"
+        "pusher/pusher-php-server": "^7.2",
+        "vanderlee/php-sentence": "^1.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

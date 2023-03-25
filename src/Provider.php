@@ -3,6 +3,7 @@
 namespace SavvyAI;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use OpenAI;
 use OpenAI\Client;
 use SavvyAI\Exceptions\MissingApiKeyException;
@@ -23,6 +24,13 @@ class Provider extends \Illuminate\Support\ServiceProvider
             }
 
             return OpenAI::client($key, $org);
+        });
+        $this->app->singleton('pinecone', static function () {
+            return Http::withHeaders([
+                'Api-Key' => Config::get('savvy-ai.pinecone.key'),
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json'
+            ])->baseUrl(Config::get('savvy-ai.pinecone.url'));
         });
 
         $this->app->alias(Savvy::class, 'savvy');
