@@ -5,7 +5,7 @@ namespace SavvyAI\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Features\Chatting\Role;
-use SavvyAI\Traits\InteractsWithOpenAI;
+use SavvyAI\Traits\InteractsWithAIService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +17,7 @@ class Dialogue extends Model
 {
     use HasUuids;
     use HasFactory;
-    use InteractsWithOpenAI;
+    use InteractsWithAIService;
 
     protected $fillable = [
         'agent_id',

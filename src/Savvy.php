@@ -3,26 +3,29 @@
 namespace SavvyAI;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
+use SavvyAI\Traits\InteractsWithAIService;
+use SavvyAI\Traits\InteractsWithVectorStore;
+use SavvyAI\Traits\LearnsWithAIService;
 
-class Savvy
+class Savvy implements Contracts\AI\ServiceContract, Contracts\Vector\StoreContract
 {
-    public function chat()
-    {
-        return __FUNCTION__;
-    }
+    use InteractsWithAIService;
+    use InteractsWithVectorStore;
+    use LearnsWithAIService;
 
-    public function train()
+    public function train(string $text, string $namespace, array $metadata = []): int
     {
-        return __FUNCTION__;
-    }
+        $sentences = $this->summarizeForTraining($text, 128, 512);
+        $vectors   = $this->vectorizeForStorage($sentences);
+        $stored    = $this->store($vectors, $namespace, $metadata);
 
-    public function tune()
-    {
-        return __FUNCTION__;
-    }
+        Log::info('SavvyAI: Training completed', [
+            'namespace' => $namespace,
+            'metadata'  => $metadata,
+            'stored'    => $stored,
+        ]);
 
-    public function estimate()
-    {
-        return __FUNCTION__;
+        return $stored;
     }
 }

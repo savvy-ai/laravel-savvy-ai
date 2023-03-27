@@ -4,7 +4,7 @@ namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\File;
 
-trait InteractsWithPinecone
+trait InteractsWithVectorStore
 {
     /**
      * @param array<int, float> $vector
@@ -33,7 +33,7 @@ trait InteractsWithPinecone
         return $sentences;
     }
 
-    public function store(array $vectors, string $namespace, array $metadata = []): int
+    public function store(array $vectors, string $namespace, array $metadata = []): bool
     {
         $dir = storage_path('statements/' . $namespace);
 
@@ -42,7 +42,7 @@ trait InteractsWithPinecone
             File::makeDirectory($dir, 0777, true, true);
         }
 
-        return pinecone()->post('/vectors/upsert', [
+        $stored = pinecone()->post('/vectors/upsert', [
             'namespace' => $namespace,
             'vectors'   => collect($vectors)->map(function ($vector) use ($dir, $metadata) {
                 $key = sha1($vector['sentence']);
@@ -56,6 +56,8 @@ trait InteractsWithPinecone
                 ];
             })->toArray(),
         ])->json('upsertedCount');
+
+        return $stored > 0;
     }
 
     public function destroy(string $namespace): bool

@@ -4,8 +4,8 @@ namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Blade;
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Models\Message;
-use SavvyAI\Features\Chatting\Reply;
+use SavvyAI\Contracts\AI\ReplyContract;
+use SavvyAI\Reply;
 
 /**
  * Makes calls to the OpenAI API to classify text, validate replies, and to chat
@@ -14,14 +14,14 @@ use SavvyAI\Features\Chatting\Reply;
  * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Traits
  */
-trait InteractsWithOpenAI
+trait InteractsWithAIService
 {
-    protected $model            = 'gpt-3.5-turbo';
-    protected $maxTokens        = 32;
-    protected $temperature      = 0.0;
-    protected $frequencyPenalty = 0.0;
-    protected $presencePenalty  = 0.0;
-    protected $stop             = ' ';
+    protected string $model           = 'gpt-3.5-turbo';
+    protected int $maxTokens          = 32;
+    protected float $temperature      = 0.0;
+    protected float $frequencyPenalty = 0.0;
+    protected float $presencePenalty  = 0.0;
+    protected ?string $stop           = ' ';
 
     protected string $classificationPrompt = <<<'EOT'
 Carefully classify the text to find the correct delegate.
@@ -48,11 +48,11 @@ EOT;
      * @param string[] $subjects List of subjects to classify
      * @param string|null $expectedStringInReply
      *
-     * @throws UnknownContextException
+     * @return ReplyContract
+     *@throws UnknownContextException
      *
-     * @return Reply
      */
-    public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): Reply
+    public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ReplyContract
     {
         $prompt = Blade::render($this->classificationPrompt, compact('subjects'));
 
@@ -75,7 +75,7 @@ EOT;
             ],
         ]);
 
-        $reply = new Reply($result);
+        $reply = Reply::fromClientResponse((array) $result);
 
         if ($reply->isContextUnknown($expectedStringInReply))
         {
@@ -89,11 +89,11 @@ EOT;
      * @param string $text
      * @param string $topic
      *
-     * @throws UnknownContextException
+     * @return ReplyContract
+     *@throws UnknownContextException
      *
-     * @return Reply
      */
-    public function validate(string $text, string $topic): Reply
+    public function validate(string $text, string $topic): ReplyContract
     {
         $result = openai()->chat()->create([
             'model'             => $this->model,
@@ -114,7 +114,7 @@ EOT;
             ],
         ]);
 
-        $reply = new Reply($result);
+        $reply = Reply::fromClientResponse((array) $result);
 
         if ($reply->isContextUnknown())
         {
@@ -142,11 +142,11 @@ EOT;
     /**
      * @param array $messages
      *
-     * @return Reply
+     * @return ReplyContract
      *
      * @throws UnknownContextException
      */
-    public function chat(array $messages = []): Reply
+    public function chat(array $messages = []): ReplyContract
     {
         $result = openai()->chat()->create([
             'model'             => $this->model,
@@ -158,7 +158,8 @@ EOT;
             'messages' => $messages,
         ]);
 
-        $reply = new Reply((array) $result);
+
+        $reply = Reply::fromClientResponse((array) $result);
 
         if ($reply->isContextUnknown())
         {

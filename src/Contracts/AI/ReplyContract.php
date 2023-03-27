@@ -12,9 +12,9 @@ namespace SavvyAI\Contracts\AI;
  *
  * @package SavvyAI\Contracts\AI
  */
-interface Reply
+interface ReplyContract
 {
-    public static function fromClientResponse(): self;
+    public static function fromClientResponse(array $response): self;
 
     public function role(): string;
     public function content(): string;

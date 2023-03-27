@@ -10,7 +10,7 @@ use SavvyAI\Exceptions\DialogueNotFoundException;
 use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\Role;
-use SavvyAI\Traits\InteractsWithOpenAI;
+use SavvyAI\Traits\InteractsWithAIService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
@@ -25,7 +25,7 @@ class Chatbot extends Model implements Delegatable
 {
     use HasUuids;
     use HasFactory;
-    use InteractsWithOpenAI;
+    use InteractsWithAIService;
 
     protected $fillable = [
         'trainable_id',

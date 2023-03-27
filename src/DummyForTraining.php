@@ -2,13 +2,13 @@
 
 namespace SavvyAI;
 
-use SavvyAI\Traits\InteractsWithPinecone;
-use SavvyAI\Traits\LearnsWithOpenAI;
+use SavvyAI\Traits\InteractsWithVectorStore;
+use SavvyAI\Traits\LearnsWithAIService;
 
 class DummyForTraining
 {
-    use LearnsWithOpenAI;
-    use InteractsWithPinecone;
+    use LearnsWithAIService;
+    use InteractsWithVectorStore;
 
     public function __construct(array $config = [])
     {

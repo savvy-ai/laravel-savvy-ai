@@ -14,14 +14,14 @@ use OpenAI\Responses\Embeddings\CreateResponse;
  * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Traits
  */
-trait LearnsWithOpenAI
+trait LearnsWithAIService
 {
-    protected $model            = 'gpt-3.5-turbo';
-    protected $maxTokens        = 1000;
-    protected $temperature      = 0.5;
-    protected $frequencyPenalty = 0.5;
-    protected $presencePenalty  = 0.1;
-    protected $stop             = null;
+    protected string $model           = 'gpt-3.5-turbo';
+    protected int $maxTokens          = 1000;
+    protected float $temperature      = 0.5;
+    protected float $frequencyPenalty = 0.5;
+    protected float $presencePenalty  = 0.1;
+    protected ?string $stop           = null;
 
     protected string $summarizingPrompt = <<<'EOT'
 Extract the most important phrases from the following text without losing any context and summarize them into multiple summaries.
@@ -42,7 +42,7 @@ EOT;
      *
      * @return array
      */
-    public function summarize(string $text, int $minLength = 16, int $maxLength = 256): array
+    public function summarizeForTraining(string $text, int $minLength = 16, int $maxLength = 256): array
     {
         $sentences = (new Sentence())->split($text, Sentence::SPLIT_TRIM);
 
@@ -79,7 +79,7 @@ EOT;
         return $mergedSentences;
     }
 
-    public function vectorize(array $sentences): array
+    public function vectorizeForStorage(array $sentences): array
     {
         $response = openai()->embeddings()->create([
             'model' => 'text-embedding-ada-002',

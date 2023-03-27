@@ -41,8 +41,8 @@ class SavvyIndex extends Command
 
         $text = file_get_contents($file);
 
-        $sentences = $dummy->summarize($text, 128, 512);
-        $vectors   = $dummy->vectorize($sentences);
+        $sentences = $dummy->summarizeForTraining($text, 128, 512);
+        $vectors   = $dummy->vectorizeForStorage($sentences);
         $memorized = $dummy->store($vectors, $this->argument('namespace'));
 
         $this->comment(print_r($memorized, true));

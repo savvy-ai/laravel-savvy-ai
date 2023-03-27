@@ -6,7 +6,7 @@ use Exception;
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 
-interface Delegate
+interface DelegateContract
 {
     /**
      * Returns a list of delegates that can be used during classification
