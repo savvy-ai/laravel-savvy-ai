@@ -62,7 +62,9 @@ class Provider extends \Illuminate\Support\ServiceProvider
                 \SavvyAI\Commands\Test\Chatting\SavvyClassify::class,
                 \SavvyAI\Commands\Test\Chatting\SavvyValidate::class,
                 \SavvyAI\Commands\Test\Chatting\SavvyChat::class,
-                \SavvyAI\Commands\Test\Training\SavvySummarize::class,
+                \SavvyAI\Commands\Test\Chatting\SavvySearch::class,
+                \SavvyAI\Commands\Test\Training\SavvyIndex::class,
+                \SavvyAI\Commands\Test\Training\SavvyDestroy::class,
             ]);
         }
     }

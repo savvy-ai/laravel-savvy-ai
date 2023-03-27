@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use SavvyAI\Features\Chatting\Role;
 
 /**
- * @property \SavvyAI\Models\Chat $chat
+ * @property Chat $chat
  */
 class Message extends Model
 {

@@ -2,6 +2,8 @@
 
 namespace SavvyAI;
 
+use Illuminate\Support\Facades\Config;
+
 class Savvy
 {
     public function chat()

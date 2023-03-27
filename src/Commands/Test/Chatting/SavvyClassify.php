@@ -60,6 +60,6 @@ class SavvyClassify extends Command
             $this->comment('Output: ' . $output);
         }
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

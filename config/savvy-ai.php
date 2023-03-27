@@ -1,9 +1,20 @@
 <?php
 
 return [
-    'openai'=> [
+    'drivers' => [
+        'ai'     => env('AI_DRIVER', 'openai'),
+        'sms'    => env('SMS_DRIVER', 'twilio'),
+        'vector' => env('VECTOR_DRIVER', 'pinecone'),
+    ],
+
+    'openai' => [
         'key' => env('OPENAI_API_KEY'),
         'org' => env('OPENAI_ORGANIZATION'),
+    ],
+
+    'cohere' => [
+        'key' => env('COHERE_API_KEY'),
+        'url' => env('COHERE_API_URL'),
     ],
 
     'pinecone' => [
@@ -11,14 +22,9 @@ return [
         'url' => env('PINECONE_INDEX_URL'),
     ],
 
-    'yelp' => [
-        'key' => env('YELP_API_KEY'),
-        'url' => env('YELP_API_URL'),
-    ],
-
-    'weather' => [
-        'key' => env('WEATHER_API_KEY'),
-        'url' => env('WEATHER_API_URL'),
+    'weaviate' => [
+        'key' => env('WEAVIATE_API_KEY'),
+        'url' => env('WEAVIATE_INDEX_URL'),
     ],
 
     'twilio' => [

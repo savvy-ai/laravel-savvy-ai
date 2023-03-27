@@ -27,8 +27,10 @@ class SavvyChat extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
+        $dummy = new DummyForChatting(['stop' => null, 'maxTokens' => 256]);
+
         $history = [
             [
                 'role' => 'system',
@@ -36,41 +38,37 @@ class SavvyChat extends Command
             ]
         ];
 
-        while(true)
+        while (true)
         {
-            $dummy = new DummyForChatting(['stop' => null,  'maxTokens' => 256]);
             $input = $this->ask('Input') ?? '';
-            $vector = $dummy->vectorize($input);
-            $results = $dummy->search($vector, 'savvy-ai-test');
+
 
             if ($input === 'exit')
             {
                 break;
             }
 
-            $this->comment(print_r($results, true));
+            $history[] = [
+                'role' => 'user',
+                'content' => $input,
+            ];
 
-            // $history[] = [
-            //     'role' => 'user',
-            //     'content' => $input,
-            // ];
+            try
+            {
+                $output = $dummy
+                    ->chat($history)
+                    ->content();
+            }
+            catch (UnknownContextException $e)
+            {
+                $this->error('Output: ' . $e->getMessage());
 
-            // try
-            // {
-            //     $output = $dummy
-            //         ->chat($history)
-            //         ->content();
-            // }
-            // catch (UnknownContextException $e)
-            // {
-            //     $this->error('Output: ' . $e->getMessage());
+                continue;
+            }
 
-            //     continue;
-            // }
-
-            // $this->comment('Output: ' . $output);
+            $this->comment('Output: ' . $output);
         }
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

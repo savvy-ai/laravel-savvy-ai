@@ -25,7 +25,7 @@ class Reply
     /**
      * @param array $result Result from the completions API request
      */
-    public function __construct($result)
+    public function __construct(array $result)
     {
         $this->usage   = $result['usage'] ?? [];
         $this->message = $result['choices'][0]['message'] ?? [];

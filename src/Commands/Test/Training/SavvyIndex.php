@@ -5,28 +5,28 @@ namespace SavvyAI\Commands\Test\Training;
 use Illuminate\Console\Command;
 use SavvyAI\DummyForTraining;
 
-class SavvySummarize extends Command
+class SavvyIndex extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'savvy:test:summarize {file}';
+    protected $signature = 'savvy:test:index {file} {namespace=savvy-ai-test}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Summarize text in a file into topical phrases';
+    protected $description = 'Index text in a file into sentences that will can be used as knowledge for chat';
 
     /**
      * Execute the console command.
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $dummy = new DummyForTraining();
 
@@ -36,19 +36,19 @@ class SavvySummarize extends Command
         {
             $this->error('File is not readable');
 
-            return Command::FAILURE;
+            return static::FAILURE;
         }
 
         $text = file_get_contents($file);
 
         $sentences = $dummy->summarize($text, 128, 512);
         $vectors   = $dummy->vectorize($sentences);
-        $memorized = $dummy->memorize($vectors, 'savvy-ai-test', ['test' => 'test']);
+        $memorized = $dummy->store($vectors, $this->argument('namespace'));
 
         $this->comment(print_r($memorized, true));
 
         // $this->comment(print_r(collect($vectors)->map(fn($vector) => [$vector['id'], $vector['sentence']])->toArray(), true));
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

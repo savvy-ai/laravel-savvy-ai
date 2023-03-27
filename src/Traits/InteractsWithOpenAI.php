@@ -4,7 +4,7 @@ namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Blade;
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Features\Chatting\Message;
+use SavvyAI\Models\Message;
 use SavvyAI\Features\Chatting\Reply;
 
 /**
@@ -45,7 +45,8 @@ EOT;
      * Classifies text into the correct delegate or unknown, based on the given subjects
      *
      * @param string $text Text to classify
-     * @param strings[] $subjects List of subjects to classify
+     * @param string[] $subjects List of subjects to classify
+     * @param string|null $expectedStringInReply
      *
      * @throws UnknownContextException
      *
@@ -85,6 +86,7 @@ EOT;
     }
 
     /**
+     * @param string $text
      * @param string $topic
      *
      * @throws UnknownContextException
@@ -138,7 +140,11 @@ EOT;
     }
 
     /**
-     * @param Message[]
+     * @param array $messages
+     *
+     * @return Reply
+     *
+     * @throws UnknownContextException
      */
     public function chat(array $messages = []): Reply
     {
@@ -152,7 +158,7 @@ EOT;
             'messages' => $messages,
         ]);
 
-        $reply = new Reply($result);
+        $reply = new Reply((array) $result);
 
         if ($reply->isContextUnknown())
         {

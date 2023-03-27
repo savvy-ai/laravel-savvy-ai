@@ -28,9 +28,10 @@ class SavvyChat extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
-        $trainable = Trainable::where('id', $this->argument('trainable_id'))
+        $trainable = Trainable::query()
+            ->where('id', $this->argument('trainable_id'))
             ->with('chatbot.agents.dialogues')
             ->firstOrFail();
 
@@ -62,6 +63,6 @@ class SavvyChat extends Command
             $this->info(sprintf(' Savvy: %s > %s', PHP_EOL, $message->content()));
         }
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

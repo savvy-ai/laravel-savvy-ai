@@ -36,7 +36,9 @@ Carefully analyze the following conversation to determine whether or not it is o
 EOT;
 
     /**
-     * @throws UnknownContextException
+     * @param string $text
+     * @param int $minLength
+     * @param int $maxLength
      *
      * @return array
      */

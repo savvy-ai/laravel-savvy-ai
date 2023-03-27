@@ -17,4 +17,6 @@ class DummyForChatting
             $this->{$key} = $value;
         }
     }
+
+
 }

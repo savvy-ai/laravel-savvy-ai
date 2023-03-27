@@ -25,7 +25,7 @@ class SavvyTrain extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $text  = file_get_contents($this->argument('file'));
         // $savvy = new SavvyAI();
@@ -40,6 +40,6 @@ class SavvyTrain extends Command
 
         $this->info('👍');
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

@@ -27,7 +27,7 @@ class SavvyValidate extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $text = $this->argument('text') ?? '';
         $topic = $this->argument('topic') ?? '';
@@ -43,11 +43,11 @@ class SavvyValidate extends Command
         {
             $this->error('Output: ' . $e->getMessage());
 
-            return Command::FAILURE;
+            return self::FAILURE;
         }
 
         $this->comment('Output: ' . $output);
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace SavvyAI\Contracts;
+namespace SavvyAI\Contracts\AI;
 
 use Exception;
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 
-interface Delegatable
+interface Delegate
 {
     /**
      * Returns a list of delegates that can be used during classification
