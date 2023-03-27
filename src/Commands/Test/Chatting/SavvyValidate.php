@@ -29,7 +29,7 @@ class SavvyValidate extends Command
      */
     public function handle(): int
     {
-        $text = $this->argument('text') ?? '';
+        $text  = $this->argument('text') ?? '';
         $topic = $this->argument('topic') ?? '';
 
         try

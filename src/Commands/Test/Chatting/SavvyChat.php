@@ -33,7 +33,7 @@ class SavvyChat extends Command
 
         $history = [
             [
-                'role' => 'system',
+                'role'    => 'system',
                 'content' => 'You are a vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Your name is Savvy and you speak broken english.',
             ]
         ];
@@ -49,7 +49,7 @@ class SavvyChat extends Command
             }
 
             $history[] = [
-                'role' => 'user',
+                'role'    => 'user',
                 'content' => $input,
             ];
 
