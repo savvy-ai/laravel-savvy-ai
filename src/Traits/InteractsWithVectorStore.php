@@ -60,7 +60,7 @@ trait InteractsWithVectorStore
         return $stored > 0;
     }
 
-    public function destroy(string $namespace): bool
+    public function destroy(string $namespace, array $filters = []): bool
     {
         $dir = storage_path('statements/' . $namespace);
 
@@ -69,10 +69,17 @@ trait InteractsWithVectorStore
             File::deleteDirectory($dir);
         }
 
-        pinecone()->post('/vectors/delete', [
+        $params = [
             'namespace' => $namespace,
             'deleteAll' => true,
-        ])->json();
+        ];
+
+        if (!empty($filters))
+        {
+            $params['filters'] = $filters;
+        }
+
+        pinecone()->post('/vectors/delete', $params)->json();
 
         return true;
     }

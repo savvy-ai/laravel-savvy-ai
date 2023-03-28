@@ -3,8 +3,11 @@
 namespace SavvyAI\Commands\Test\Chatting;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Blade;
 use SavvyAI\DummyForChatting;
+use SavvyAI\DummyForExpanding;
 use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Savvy;
 
 class SavvyChat extends Command
 {
@@ -29,12 +32,28 @@ class SavvyChat extends Command
      */
     public function handle(): int
     {
-        $dummy = new DummyForChatting(['stop' => null, 'maxTokens' => 256]);
+        $input  = 'Is the pool heated?';
+        $prompt = Blade::render(
+            'You are a vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Here is your knowledge base. <PropertyStatements namespace="my namespace" filters="f1: 1, f2: 2" />',
+            [
+                'user' => [
+                    'uid' => 'savvy-ai-test',
+                ],
+            ]
+        );
 
+        $expended = (new DummyForExpanding())->expand(
+            $prompt,
+            $input,
+        );
+
+        $this->comment($expended);
+
+        /*
         $history = [
             [
                 'role'    => 'system',
-                'content' => 'You are a vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Your name is Savvy and you speak broken english.',
+                'content' => 'You are a <GetPropertyKnowledge /> vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Your name is Savvy and you speak broken english.',
             ]
         ];
 
@@ -55,9 +74,7 @@ class SavvyChat extends Command
 
             try
             {
-                $output = $dummy
-                    ->chat($history)
-                    ->content();
+                $output = Savvy::chat($history)->content();
             }
             catch (UnknownContextException $e)
             {
@@ -68,7 +85,7 @@ class SavvyChat extends Command
 
             $this->comment('Output: ' . $output);
         }
-
+    */
         return self::SUCCESS;
     }
 }

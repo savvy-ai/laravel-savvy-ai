@@ -3,6 +3,7 @@
 namespace SavvyAI\Commands;
 
 use Illuminate\Console\Command;
+use SavvyAI\Savvy;
 
 class SavvyTrain extends Command
 {
@@ -11,14 +12,14 @@ class SavvyTrain extends Command
      *
      * @var string
      */
-    protected $signature = 'savvy:train {file}';
+    protected $signature = 'savvy:train {file} {namespace=savvy-ai-test}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Train a trainable using a text file with domain knowledge.';
+    protected $description = 'Index text in a file into sentences that will be used as knowledge for chat';
 
     /**
      * Execute the console command.
@@ -27,18 +28,17 @@ class SavvyTrain extends Command
      */
     public function handle(): int
     {
-        $text  = file_get_contents($this->argument('file'));
-        // $savvy = new SavvyAI();
+        $text   = file_get_contents($this->argument('file'));
+        $stored =  Savvy::train($text, $this->argument('namespace'));
 
-        // $savvy->train($text, new TrainingConfig([
-        //     'user' => User::first(),
-        //     'property' => Property::first() ?? new Property(['id' => 123456]),
-        //     'metadata' => [
-        //         'property_id' => Property::first()->id ?? 123456,
-        //     ],
-        // ]));
+        if (!$stored)
+        {
+            $this->error('Training failed');
 
-        $this->info('👍');
+            return self::FAILURE;
+        }
+
+        $this->info('Training completed');
 
         return self::SUCCESS;
     }

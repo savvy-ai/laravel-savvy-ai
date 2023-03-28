@@ -40,7 +40,8 @@
         "nyholm/psr7": "^1.5",
         "twilio/sdk": "^7.0",
         "pusher/pusher-php-server": "^7.2",
-        "vanderlee/php-sentence": "^1.0"
+        "vanderlee/php-sentence": "^1.0",
+        "filament/filament": "^2.17"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -49,12 +50,10 @@
             "php-http/discovery": true
         }
     },
+    "sort-packages": true,
     "extra": {
         "laravel": {
             "providers": ["SavvyAI\\Provider"]
         }
-    },
-    "require-dev": {
-        "filament/filament": "^2.17"
     }
 }

@@ -16,12 +16,12 @@ use SavvyAI\Reply;
  */
 trait InteractsWithAIService
 {
-    protected string $model           = 'gpt-3.5-turbo';
-    protected int $maxTokens          = 32;
-    protected float $temperature      = 0.0;
-    protected float $frequencyPenalty = 0.0;
-    protected float $presencePenalty  = 0.0;
-    protected ?string $stop           = ' ';
+    public string $model           = 'gpt-3.5-turbo';
+    public int $maxTokens          = 32;
+    public float $temperature      = 0.0;
+    public float $frequencyPenalty = 0.0;
+    public float $presencePenalty  = 0.0;
+    public ?string $stop           = ' ';
 
     protected string $classificationPrompt = <<<'EOT'
 Carefully classify the text to find the correct delegate.
@@ -157,7 +157,6 @@ EOT;
             'stop'              => $this->stop ?? null,
             'messages' => $messages,
         ]);
-
 
         $reply = Reply::fromClientResponse((array) $result);
 

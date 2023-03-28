@@ -3,11 +3,11 @@
 namespace SavvyAI;
 
 use SavvyAI\Traits\InteractsWithVectorStore;
-use SavvyAI\Traits\LearnsWithAIService;
+use SavvyAI\Traits\TrainsWithAIService;
 
 class DummyForTraining
 {
-    use LearnsWithAIService;
+    use TrainsWithAIService;
     use InteractsWithVectorStore;
 
     public function __construct(array $config = [])

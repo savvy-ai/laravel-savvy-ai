@@ -19,7 +19,7 @@ class SavvyIndex extends Command
      *
      * @var string
      */
-    protected $description = 'Index text in a file into sentences that will can be used as knowledge for chat';
+    protected $description = 'Index text in a file into sentences that will be used as knowledge for chat';
 
     /**
      * Execute the console command.

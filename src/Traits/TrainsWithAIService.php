@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Traits;
 
+use Illuminate\Support\Facades\Log;
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\Reply;
 use Vanderlee\Sentence\Sentence;
@@ -14,26 +15,22 @@ use OpenAI\Responses\Embeddings\CreateResponse;
  * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Traits
  */
-trait LearnsWithAIService
+trait TrainsWithAIService
 {
-    protected string $model           = 'gpt-3.5-turbo';
-    protected int $maxTokens          = 1000;
-    protected float $temperature      = 0.5;
-    protected float $frequencyPenalty = 0.5;
-    protected float $presencePenalty  = 0.1;
-    protected ?string $stop           = null;
+    public function train(string $text, string $namespace, array $metadata = []): bool
+    {
+        $sentences = $this->summarizeForTraining($text, 128, 512);
+        $vectors   = $this->vectorizeForStorage($sentences);
+        $stored    = $this->store($vectors, $namespace, $metadata);
 
-    protected string $summarizingPrompt = <<<'EOT'
-Extract the most important phrases from the following text without losing any context and summarize them into multiple summaries.
-EOT;
+        Log::info('SavvyAI: Training completed', [
+            'namespace' => $namespace,
+            'metadata'  => $metadata,
+            'stored'    => $stored,
+        ]);
 
-    protected string $vectorizingPrompt = <<<'EOT'
-Carefully analyze the following conversation to determine whether or not it is on topic.
-
-- The topic of the conversation is: "{!! $topic !!}"
-- If the conversation is on topic, you MUST say "@OnTopic()"
-- If the conversation is off topic, you MUST say "@OffTopic()"
-EOT;
+        return $stored;
+    }
 
     /**
      * @param string $text

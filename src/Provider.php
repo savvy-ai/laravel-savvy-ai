@@ -7,16 +7,17 @@ use Illuminate\Support\Facades\Http;
 use OpenAI;
 use OpenAI\Client;
 use SavvyAI\Exceptions\MissingApiKeyException;
-use SavvyAI\Savvy;
 
 class Provider extends \Illuminate\Support\ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(Savvy::class, static fn () => new \SavvyAI\Savvy());
+        $this->app->singleton(SavvyAI::class, static fn () => new SavvyAI());
         $this->app->singleton(Client::class, static function () {
-            $key = Config::get('savvy-ai.openai.key');
-            $org = Config::get('savvy-ai.openai.org');
+            $driver = config('savvy-ai.drivers.ai');
+
+            $key = config(sprintf('savvy-ai.%s.key', $driver));
+            $org = config(sprintf('savvy-ai.%s.org', $driver));
 
             if (! is_string($key) || ($org !== null && ! is_string($org)))
             {
@@ -33,15 +34,15 @@ class Provider extends \Illuminate\Support\ServiceProvider
             ])->baseUrl(Config::get('savvy-ai.pinecone.url'));
         });
 
-        $this->app->alias(Savvy::class, 'savvy');
+        $this->app->alias(SavvyAI::class, 'savvy');
         $this->app->alias(Client::class, 'openai');
     }
 
-    public function provides()
+    public function provides(): array
     {
         return [
-            Savvy::class,
             Client::class,
+            SavvyAI::class,
         ];
     }
 
