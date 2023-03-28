@@ -49,8 +49,8 @@ EOT;
      * @param string|null $expectedStringInReply
      *
      * @return ReplyContract
-     *@throws UnknownContextException
      *
+     * @throws UnknownContextException
      */
     public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ReplyContract
     {
@@ -90,8 +90,8 @@ EOT;
      * @param string $topic
      *
      * @return ReplyContract
-     *@throws UnknownContextException
      *
+     * @throws UnknownContextException
      */
     public function validate(string $text, string $topic): ReplyContract
     {
