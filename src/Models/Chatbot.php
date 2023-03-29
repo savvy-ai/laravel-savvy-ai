@@ -3,8 +3,6 @@
 namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use SavvyAI\Models\Chat;
-use SavvyAI\Models\Message;
 use SavvyAI\Exceptions\AgentNotFoundException;
 use SavvyAI\Exceptions\DialogueNotFoundException;
 use SavvyAI\Exceptions\OffTopicException;
@@ -13,15 +11,14 @@ use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Traits\InteractsWithAIService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Log;
-use SavvyAI\Contracts\Delegatable;
+use SavvyAI\Contracts\AI\DelegateContract;
 
 /**
- * @property \SavvyAI\Models\Trainable $trainable
- * @property \SavvyAI\Models\Agent[] $agents
+ * @property Trainable $trainable
+ * @property Agent[] $agents
  */
-class Chatbot extends Model implements Delegatable
+class Chatbot extends Model implements DelegateContract
 {
     use HasUuids;
     use HasFactory;
@@ -42,22 +39,19 @@ class Chatbot extends Model implements Delegatable
         'name'
     ];
 
-    public function delegates(): array
-    {
-        return $this->agents;
-    }
-
-    public function preparePrompt()
-    {
-        return Blade::render($this->prompt, ['agents' => $this->agents]);
-    }
-
-    public function prepareFallbackMessage()
+    public function prepareFallbackMessage(): Message
     {
         return new Message([
-            'role' => Role::Assistant,
-            'content' => 'Sorry, I am not able to help with that. Is there anything else I can help with?',
+            'role' => Role::Assistant->value,
+            'content' => 'I am sorry, I do not understand what you are saying. Please try again.',
         ]);
+    }
+
+    public function delegates(): array
+    {
+        return $this->agents
+            ->map(fn($agent) => $agent->classification)
+            ->toArray();
     }
 
     public function delegate(Chat $chat, Message $incomingMessage, \Exception $previouslyThrowException = null): Message
@@ -73,12 +67,14 @@ class Chatbot extends Model implements Delegatable
             {
                 Log::debug('Bot::delegate() -> finding a suitable agent');
 
-                $reply = $this->call([
-                    ['role' => Role::System->value, 'content' => $this->preparePrompt()],
-                    ['role' => Role::User->value, 'content' => $incomingMessage->content],
-                ]);
+                $reply = $this->classify($incomingMessage->content, $this->delegates());
 
-                $agent = $reply->agent();
+                if ($reply->isContextUnknown() || !($agent = $reply->agent()))
+                {
+                    throw new AgentNotFoundException($reply->content());
+                }
+
+                $agent = Agent::query()->where('name', $agent)->firstOrFail();
             }
 
             Log::debug('Bot::delegate() -> delegating to agent: ' . $agent->name);
@@ -96,8 +92,7 @@ class Chatbot extends Model implements Delegatable
             $chat->save();
 
             return $outgoingMessage;
-        }
-        catch (OffTopicException | UnknownContextException $e)
+        } catch (OffTopicException|UnknownContextException $e)
         {
             Log::error($e->getMessage());
 
@@ -107,8 +102,7 @@ class Chatbot extends Model implements Delegatable
             }
 
             return $this->prepareFallbackMessage();
-        }
-        catch (AgentNotFoundException | DialogueNotFoundException $e)
+        } catch (AgentNotFoundException|DialogueNotFoundException $e)
         {
             Log::error($e->getMessage());
 

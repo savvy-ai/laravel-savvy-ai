@@ -2,22 +2,27 @@
 
 namespace SavvyAI\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use SavvyAI\Contracts\AI\DelegateContract;
 use SavvyAI\Exceptions\OffTopicException;
+use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\Role;
+use SavvyAI\Traits\ExpandsPromptSnippets;
 use SavvyAI\Traits\InteractsWithAIService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 /**
- * @property \SavvyAI\Models\Agent $agent
+ * @property Agent $agent
  */
-class Dialogue extends Model
+class Dialogue extends Model implements DelegateContract
 {
     use HasUuids;
     use HasFactory;
     use InteractsWithAIService;
+    use ExpandsPromptSnippets;
 
     protected $fillable = [
         'agent_id',
@@ -33,6 +38,12 @@ class Dialogue extends Model
         'stop'
     ];
 
+
+    public function delegates(): array
+    {
+        return [];
+    }
+
     public function chatbot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->agent->chatbot();
@@ -43,125 +54,50 @@ class Dialogue extends Model
         return $this->belongsTo(Agent::class);
     }
 
-    public function topic()
-    {
-        return $this->topic;
-    }
-
-    public function classification()
-    {
-        return $this->classification;
-    }
-
-    public function preparePrompt()
-    {
-        return $this->prompt;
-    }
-
-    public function prepareTopicGuard()
-    {
-        return implode(PHP_EOL, [
-            'Carefully analyze the following conversation to determine whether or not it is on topic.',
-            'The topic of the conversation is: ' . $this->topic,
-            'If the conversation is on topic, you MUST say @OnTopic()',
-            'If the conversation is off topic, you MUST say @OffTopic()',
-        ]);
-    }
-
-    public function delegate(Chat $chat, Message $incomingMessage): Message
+    /**
+     * @param Chat $chat
+     * @param Message $incomingMessage
+     * @param ?Exception $previouslyThrownException
+     * @return Message
+     *
+     * @throws OffTopicException|UnknownContextException
+     */
+    public function delegate(Chat $chat, Message $incomingMessage, Exception $previouslyThrownException = null): Message
     {
         Log::debug('Dialogue::delegate()');
 
-        try
-        {
-            if (($message = $this->useTools($chat, $incomingMessage)))
-            {
-                Log::debug('Dialogue::delegate() -> generating reply with tools');
+        Log::debug('Dialogue::delegate() -> expanding prompt snippets');
 
-                if ($message->formattedAsReply)
-                {
-                    $message->dialogue_id    = $this->id;
-                    $message->persistContext = false;
+        $prompt = $this->expand($this->prompt, $incomingMessage->content);
 
-                    return $message;
-                }
+        Log::debug('Dialogue::delegate() -> generating reply');
 
-                $this->prompt = $message->content;
-            }
+        $messages = $chat->messages()
+            ->thread($this)
+            ->get()
+            ->map(fn($message) => ['role' => $message->role, 'content' => $message->content]);
 
-            Log::debug('Dialogue::delegate() -> generating reply');
-
-            $messages = $chat->messages()
-                ->thread($this)
-                ->get()
-                ->map(fn ($message) => ['role' => $message->role, 'content' => $message->content]);
-
-            $reply = $this->call([
-                ['role' => Role::System->value, 'content' => $this->preparePrompt()],
-                ...$messages->toArray(),
-                ['role' => Role::User->value, 'content' => $incomingMessage->content],
-            ]);
-
-            $outgoingMessage = Message::fromReply($reply);
-
-            $this->stop        = ' ';
-            $this->temperature = 0.0;
-
-            $reply = $this->call([
-                ['role' => Role::System->value, 'content' => $this->prepareTopicGuard()],
-                ['role' => Role::User->value, 'content' => $incomingMessage->content],
-                ['role' => Role::Assistant->value, 'content' => $outgoingMessage->content],
-            ]);
-
-            if ($reply->isOnTopic())
-            {
-                Log::debug('Dialogue::delegate() -> reply is on topic');
-
-                $outgoingMessage->dialogue_id = $this->id;
-
-                return $outgoingMessage;
-            }
-
-            throw new OffTopicException($reply->content());
-        }
-        catch (\Exception $e)
-        {
-            throw $e;
-        }
-    }
-
-    public function useTools(Chat $chat, Message $incomingMessage): ?Message
-    {
-        // Check if the prompt uses tools
-        preg_match('/<([a-zA-Z0-9]+)\/>/', $this->prompt, $matches);
-
-        if (!$matches)
-        {
-            return null;
-        }
-
-        $outgoingMessage = new Message([
-            'role'    => Role::Assistant->value,
-            'media'   => null,
-            'content' => '',
+        $reply = $this->chat([
+            ['role' => Role::System->value, 'content' => $prompt],
+            ...$messages->toArray(),
+            ['role' => Role::User->value, 'content' => $incomingMessage->content],
         ]);
 
-        $content = preg_replace_callback('/<([a-zA-Z0-9]+)\/>/', function ($matches) use ($chat, $outgoingMessage) {
-            $name   = '\\SavvyAI\\Savvy\\Chat\\Tools\\' . $matches[1];
-            $tool   = new $name();
-            $output = $tool->use($chat, $outgoingMessage);
+        $outgoingMessage = Message::fromReply($reply);
 
-            if (!$output->formattedAsReply)
-            {
-                $outgoingMessage->formattedAsReply = false;
-            }
+        $this->maxTokens = 16;
+        $this->temperature = 0.0;
 
-            $outgoingMessage->media = array_merge($outgoingMessage->media ?? [], $output->media ?? []);
+        Log::debug('Dialogue::delegate() -> validating reply to ensure it is on topic');
 
-            return $output->content;
-        }, $this->prompt);
+        $this->validateWithMessages([
+            ['role' => Role::User->value, 'content' => $incomingMessage->content],
+            ['role' => Role::Assistant->value, 'content' => $outgoingMessage->content],
+        ], $this->topic);
 
-        $outgoingMessage->content = $content;
+        Log::debug('Dialogue::delegate() -> reply is on topic');
+
+        $outgoingMessage->dialogue_id = $this->id;
 
         return $outgoingMessage;
     }

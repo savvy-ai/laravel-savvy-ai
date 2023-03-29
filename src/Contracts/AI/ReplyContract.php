@@ -2,6 +2,8 @@
 
 namespace SavvyAI\Contracts\AI;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * Represents a response from the completions API
  *
@@ -26,6 +28,6 @@ interface ReplyContract
     public function isOnTopic(): bool;
     public function isContextUnknown(string $expected = null): bool;
 
-    public function agent(): ?\SavvyAI\Models\Agent;
-    public function dialogue(): ?\SavvyAI\Models\Dialogue;
+    public function agent(): string;
+    public function dialogue(): string;
 }

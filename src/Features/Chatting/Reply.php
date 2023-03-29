@@ -2,11 +2,8 @@
 
 namespace SavvyAI\Features\Chatting;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use SavvyAI\Models\Agent;
-use SavvyAI\Models\Dialogue;
-use SavvyAI\Models\Message;
+use SavvyAI\Contracts\AI\ReplyContract;
 
 /**
  * Represents a response from the completions API
@@ -17,26 +14,22 @@ use SavvyAI\Models\Message;
  * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Chat
  */
-class Reply
+class Reply implements ReplyContract
 {
     protected array $usage;
     protected array $message;
 
     /**
-     * @param array $result Result from the completions API request
+     * @param array $response Result from the completions API request
      */
-    public function __construct(array $result)
+    public static function fromClientResponse(array $response): ReplyContract
     {
-        $this->usage   = $result['usage'] ?? [];
-        $this->message = $result['choices'][0]['message'] ?? [];
-    }
+        $instance = new static();
 
-    public function message(): Message
-    {
-        return new Message([
-            'role' => $this->role(),
-            'content' => $this->content(),
-        ]);
+        $instance->usage   = $response['usage']->toArray() ?? [];
+        $instance->message = $response['choices'][0]->message->toArray() ?? [];
+
+        return $instance;
     }
 
     public function role(): string
@@ -71,14 +64,15 @@ class Reply
         return mb_stripos($this->content(), '@OnTopic') !== false;
     }
 
-    public function agent(): ?Agent
+
+    public function agent(): string
     {
-        return Agent::where('name', $this->entity()['class'] ?? null)->first();
+        return $this->entity()['class'] ?? '';
     }
 
-    public function dialogue(): ?Dialogue
+    public function dialogue(): string
     {
-        return Dialogue::where('name', $this->entity()['class'] ?? null)->first();
+        return $this->entity()['class'] ?? '';
     }
 
     public function totalTokensUsed(): int
@@ -96,11 +90,9 @@ class Reply
         return $this->usage['completion_tokens'] ?? 0;
     }
 
-    protected function entity()
+    protected function entity(): array
     {
         preg_match('/@([a-zA-Z]+)\(([^)]+)?\)/', $this->content(), $matches);
-
-        Log::debug('Reply::entity() -> '. $this->content(), $matches);
 
         return [
             'class' => $matches[1] ?? '',

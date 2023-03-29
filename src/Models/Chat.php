@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property \SavvyAI\Models\Trainable $trainable
- * @property \SavvyAI\Models\Message[] $messages
- * @property \SavvyAI\Models\Agent $agent
- * @property \SavvyAI\Models\Dialogue $dialogue
+ * @property Trainable $trainable
+ * @property Message[] $messages
+ * @property Agent $agent
+ * @property Dialogue $dialogue
  */
 class Chat extends Model
 {
