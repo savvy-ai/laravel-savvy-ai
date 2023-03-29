@@ -17,7 +17,7 @@ trait InteractsWithVectorStore
     {
         $dir = storage_path('statements/' . $namespace);
 
-        $matches = pinecone()->post('/query', [
+        $matches = vector()->post('/query', [
             'vector'    => $vector,
             'namespace' => $namespace,
             'topK'      => 10,
@@ -42,7 +42,7 @@ trait InteractsWithVectorStore
             File::makeDirectory($dir, 0777, true, true);
         }
 
-        $stored = pinecone()->post('/vectors/upsert', [
+        $stored = vector()->post('/vectors/upsert', [
             'namespace' => $namespace,
             'vectors'   => collect($vectors)->map(function ($vector) use ($dir, $metadata) {
                 $key = sha1($vector['sentence']);
@@ -79,7 +79,7 @@ trait InteractsWithVectorStore
             $params['filters'] = $filters;
         }
 
-        pinecone()->post('/vectors/delete', $params)->json();
+        vector()->post('/vectors/delete', $params)->json();
 
         return true;
     }

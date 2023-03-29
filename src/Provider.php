@@ -13,6 +13,7 @@ class Provider extends \Illuminate\Support\ServiceProvider
     public function register()
     {
         $this->app->singleton(SavvyAI::class, static fn () => new SavvyAI());
+
         $this->app->singleton(Client::class, static function () {
             $driver = config('savvy-ai.drivers.ai');
 
@@ -26,7 +27,8 @@ class Provider extends \Illuminate\Support\ServiceProvider
 
             return OpenAI::client($key, $org);
         });
-        $this->app->singleton('pinecone', static function () {
+
+        $this->app->singleton('vector', static function () {
             return Http::withHeaders([
                 'Api-Key' => Config::get('savvy-ai.pinecone.key'),
                 'Accept' => 'application/json',
@@ -35,7 +37,7 @@ class Provider extends \Illuminate\Support\ServiceProvider
         });
 
         $this->app->alias(SavvyAI::class, 'savvy');
-        $this->app->alias(Client::class, 'openai');
+        $this->app->alias(Client::class, 'ai');
     }
 
     public function provides(): array

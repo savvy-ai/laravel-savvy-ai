@@ -56,7 +56,7 @@ EOT;
     {
         $prompt = Blade::render($this->classificationPrompt, compact('subjects'));
 
-        $result = openai()->chat()->create([
+        $result = ai()->chat()->create([
             'model'             => $this->model,
             'max_tokens'        => $this->maxTokens,
             'temperature'       => $this->temperature,
@@ -95,7 +95,7 @@ EOT;
      */
     public function validate(string $text, string $topic): ReplyContract
     {
-        $result = openai()->chat()->create([
+        $result = ai()->chat()->create([
             'model'             => $this->model,
             'max_tokens'        => $this->maxTokens,
             'temperature'       => $this->temperature,
@@ -131,7 +131,7 @@ EOT;
      */
     public function vectorize(string $text): array
     {
-        $response = openai()->embeddings()->create([
+        $response = ai()->embeddings()->create([
             'model' => 'text-embedding-ada-002',
             'input' => $text,
         ]);
@@ -148,7 +148,7 @@ EOT;
      */
     public function chat(array $messages = []): ReplyContract
     {
-        $result = openai()->chat()->create([
+        $result = ai()->chat()->create([
             'model'             => $this->model,
             'max_tokens'        => $this->maxTokens,
             'temperature'       => $this->temperature,

@@ -3,10 +3,7 @@
 namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Log;
-use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Features\Chatting\Reply;
 use Vanderlee\Sentence\Sentence;
-use OpenAI\Responses\Embeddings\CreateResponse;
 
 /**
  * Makes calls to the OpenAI API to vectorize and summarize text for training purposes
@@ -78,7 +75,7 @@ trait TrainsWithAIService
 
     public function vectorizeForStorage(array $sentences): array
     {
-        $response = openai()->embeddings()->create([
+        $response = ai()->embeddings()->create([
             'model' => 'text-embedding-ada-002',
             'input' => $sentences,
         ]);

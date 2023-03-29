@@ -11,18 +11,18 @@ if (!function_exists('savvy'))
     }
 }
 
-if (!function_exists('openai'))
+if (!function_exists('ai'))
 {
-    function openai(): OpenAI\Client
+    function ai(): OpenAI\Client
     {
-        return App::make('openai');
+        return App::make('ai');
     }
 }
 
-if (!function_exists('pinecone'))
+if (!function_exists('vector'))
 {
-    function pinecone(): PendingRequest
+    function vector(): PendingRequest
     {
-        return App::make('pinecone');
+        return App::make('vector');
     }
 }
