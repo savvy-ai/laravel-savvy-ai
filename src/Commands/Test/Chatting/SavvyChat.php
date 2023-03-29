@@ -34,7 +34,7 @@ class SavvyChat extends Command
     {
         $input  = 'Is the pool heated?';
         $prompt = Blade::render(
-            'You are a vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Here is your knowledge base. <PropertyStatements namespace="my namespace" filters="f1: 1, f2: 2" />',
+            'You are a vacation rental guest service chatbot trained by OpenAI and fine-tuned by SavvyAI. Here is your knowledge base. <PropertyStatements namespace="savvy-ai-full-training" />',
             [
                 'user' => [
                     'uid' => 'savvy-ai-test',

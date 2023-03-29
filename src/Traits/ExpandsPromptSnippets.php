@@ -28,7 +28,7 @@ trait ExpandsPromptSnippets
             $name    = self::NAMESPACE . $snippet;
             $snippet = new $name($attributes);
 
-            str_replace($match[0], $snippet->use($input), $prompt);
+            $prompt = str_replace($match[0], $snippet->use($input), $prompt);
         }
 
         return $prompt;
