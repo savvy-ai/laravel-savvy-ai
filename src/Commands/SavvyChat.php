@@ -3,7 +3,10 @@
 namespace SavvyAI\Commands;
 
 use Illuminate\Console\Command;
+use SavvyAI\Contracts\ChatContract;
+use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
+use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 use SavvyAI\Models\Trainable;
 
@@ -35,10 +38,12 @@ class SavvyChat extends Command
             ->with('chatbot.agents.dialogues')
             ->firstOrFail();
 
-        $chat = $trainable->chats()
-            ->firstOrCreate(
-                ['id' => $this->argument('chat_id')]
-            );
+        /** @var ChatContract $chat */
+        $chat = Chat::query()
+            ->firstOrCreate([
+                'id' => $this->argument('chat_id'),
+                'trainable_id' => $trainable->id,
+            ]);
 
         $this->info(print_r([
             'Trainable' => $trainable->id,
@@ -54,11 +59,9 @@ class SavvyChat extends Command
                 break;
             }
 
-            $message = $trainable->chatbot->delegate($chat, new Message([
-                    'role' => Role::User->value,
-                    'content' => $prompt,
-                ]
-            ));
+            $chat->addMessage(new ChatMessage(Role::User, $prompt));
+
+            $message = $trainable->chatbot->delegate($chat);
 
             $this->info(sprintf(' Savvy: %s > %s', PHP_EOL, $message->content()));
         }

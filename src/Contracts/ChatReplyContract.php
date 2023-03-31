@@ -1,22 +1,18 @@
 <?php
 
-namespace SavvyAI\Contracts\AI;
-
-use Illuminate\Database\Eloquent\Model;
+namespace SavvyAI\Contracts;
 
 /**
- * Represents a response from the completions API
- *
- * Class Reply
+ * Represents a response from the AI service
  *
  * @author Selvin Ortiz <selvin@savvyai.com>
  * @author Brennen Phippen <brennen@savvyai.com>
  *
- * @package SavvyAI\Contracts\AI
+ * @package SavvyAI\Contracts
  */
-interface ReplyContract
+interface ChatReplyContract
 {
-    public static function fromClientResponse(array $response): self;
+    public static function fromAIServiceResponse(array $response): self;
 
     public function role(): string;
     public function content(): string;

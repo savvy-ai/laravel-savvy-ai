@@ -73,7 +73,7 @@ trait TrainsWithAIService
         return $mergedSentences;
     }
 
-    public function vectorizeForStorage(array $sentences): array
+    public function vectorizeForStorage(array $sentences, int $maxTokens = 1000): array
     {
         $response = ai()->embeddings()->create([
             'model' => 'text-embedding-ada-002',

@@ -3,11 +3,13 @@
 namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Models\Agent;
 use SavvyAI\Models\Dialogue;
 use SavvyAI\Models\Trainable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use SavvyAI\Traits\Chatable;
 
 /**
  * @property Trainable $trainable
@@ -15,10 +17,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property Agent $agent
  * @property Dialogue $dialogue
  */
-class Chat extends Model
+class Chat extends Model implements ChatContract
 {
     use HasUuids;
     use HasFactory;
+    use Chatable;
 
     protected $fillable = [
         'handle',

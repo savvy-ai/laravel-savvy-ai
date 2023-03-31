@@ -3,10 +3,9 @@
 namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Log;
+use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Contracts\AI\ReplyContract;
-use SavvyAI\Features\Chatting\Reply;
+use SavvyAI\Features\Chatting\ChatReply;
 use SavvyAI\Features\Chatting\Role;
 
 /**
@@ -49,11 +48,11 @@ EOT;
      * @param string[] $subjects List of subjects to classify
      * @param string|null $expectedStringInReply
      *
-     * @return ReplyContract
+     * @return ChatReplyContract
      *
      * @throws UnknownContextException
      */
-    public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ReplyContract
+    public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ChatReplyContract
     {
         $result = ai()->chat()->create([
             'model'             => $this->model,
@@ -74,7 +73,7 @@ EOT;
             ],
         ]);
 
-        $reply = Reply::fromClientResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $result);
 
         if ($reply->isContextUnknown($expectedStringInReply))
         {
@@ -88,11 +87,11 @@ EOT;
      * @param string $text
      * @param string $topic
      *
-     * @return ReplyContract
+     * @return ChatReplyContract
      *
      * @throws UnknownContextException
      */
-    public function validate(string $text, string $topic): ReplyContract
+    public function validate(string $text, string $topic): ChatReplyContract
     {
         return $this->validateWithMessages([
             'role' => Role::User->value,
@@ -104,11 +103,11 @@ EOT;
      * @param array<int, array<string, string>> $messages
      * @param string $topic
      *
-     * @return ReplyContract
+     * @return ChatReplyContract
      *
      * @throws UnknownContextException
      */
-    public function validateWithMessages(array $messages, string $topic): ReplyContract
+    public function validateWithMessages(array $messages, string $topic): ChatReplyContract
     {
         $result = ai()->chat()->create([
             'model'             => $this->model,
@@ -125,7 +124,7 @@ EOT;
             ], $messages),
         ]);
 
-        $reply = Reply::fromClientResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $result);
 
         if ($reply->isContextUnknown())
         {
@@ -158,11 +157,11 @@ EOT;
     /**
      * @param array $messages
      *
-     * @return ReplyContract
+     * @return ChatReplyContract
      *
      * @throws UnknownContextException
      */
-    public function chat(array $messages = []): ReplyContract
+    public function chat(array $messages = []): ChatReplyContract
     {
         $result = ai()->chat()->create([
             'model'             => $this->model,
@@ -174,7 +173,7 @@ EOT;
             'messages' => $messages,
         ]);
 
-        $reply = Reply::fromClientResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $result);
 
         if ($reply->isContextUnknown())
         {

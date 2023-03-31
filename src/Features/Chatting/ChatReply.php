@@ -3,18 +3,18 @@
 namespace SavvyAI\Features\Chatting;
 
 use Illuminate\Support\Str;
-use SavvyAI\Contracts\AI\ReplyContract;
+use SavvyAI\Contracts\ChatReplyContract;
 
 /**
  * Represents a response from the completions API
  *
- * Class Reply
+ * Class ChatReply
  *
  * @author Selvin Ortiz <selvin@savvyai.com>
  * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Chat
  */
-class Reply implements ReplyContract
+class ChatReply implements ChatReplyContract
 {
     protected array $usage;
     protected array $message;
@@ -22,7 +22,7 @@ class Reply implements ReplyContract
     /**
      * @param array $response Result from the completions API request
      */
-    public static function fromClientResponse(array $response): ReplyContract
+    public static function fromAIServiceResponse(array $response): ChatReplyContract
     {
         $instance = new static();
 
@@ -71,6 +71,11 @@ class Reply implements ReplyContract
     }
 
     public function dialogue(): string
+    {
+        return $this->entity()['class'] ?? '';
+    }
+
+    public function delegate(): string
     {
         return $this->entity()['class'] ?? '';
     }

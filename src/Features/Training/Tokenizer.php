@@ -9,8 +9,8 @@ use Gioni06\Gpt3Tokenizer\Gpt3TokenizerConfig;
  * Splits text into tokens.
  *
  * This is important because the OpenAI API has a limit of 4000 tokens per request.
- * Splitting the text into tokens allows to determine if the given text is below a threshhold.
- * If the text exceeds the threshhold, it can be split into smaller segments by the Segmenter class.
+ * Splitting the text into tokens allows to determine if the given text is below a threshold.
+ * If the text exceeds the threshold, it can be split into smaller segments by the Segmenter class.
  *
  * Class Tokenizer
  * @author Selvin Ortiz <selvin@savvyai.com>

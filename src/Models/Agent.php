@@ -2,25 +2,29 @@
 
 namespace SavvyAI\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use SavvyAI\Contracts\AI\DelegateContract;
-use SavvyAI\Exceptions\DialogueNotFoundException;
-use SavvyAI\Exceptions\OffTopicException;
-use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Traits\InteractsWithAIService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use Exception;
+use SavvyAI\Contracts\ChatContract;
+use SavvyAI\Contracts\ChatDelegateContract;
+use SavvyAI\Contracts\ChatMessageContract;
+use SavvyAI\Exceptions\DialogueNotFoundException;
+use SavvyAI\Exceptions\OffTopicException;
+use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Traits\Delegatable;
+use SavvyAI\Traits\InteractsWithAIService;
 
 /**
  * @property Chatbot $bot
  * @property Dialogue[] $dialogues
  */
-class Agent extends Model implements DelegateContract
+class Agent extends Model implements ChatDelegateContract
 {
     use HasUuids;
     use HasFactory;
+    use Delegatable;
     use InteractsWithAIService;
 
     protected $fillable = [
@@ -51,52 +55,5 @@ class Agent extends Model implements DelegateContract
     public function dialogues(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Dialogue::class);
-    }
-
-    /**
-     * @param Chat $chat
-     * @param Message $incomingMessage
-     * @param ?Exception $previouslyThrowException
-     *
-     * @return Message
-     *
-     * @throws DialogueNotFoundException
-     * @throws OffTopicException
-     * @throws UnknownContextException
-     */
-    public function delegate(Chat $chat, Message $incomingMessage, Exception $previouslyThrowException = null): Message
-    {
-        Log::debug('Agent::delegate()');
-
-        $dialogue = $previouslyThrowException ? null : $chat->dialogue;
-
-        if (!$dialogue)
-        {
-            Log::debug('Agent::delegate() -> finding a suitable dialogue');
-
-            $reply = $this->classify($incomingMessage->content, $this->delegates());
-
-
-            if (!($dialogue = $reply->dialogue()))
-            {
-                throw new DialogueNotFoundException($reply->content());
-            }
-
-            $dialogue = Dialogue::query()->where('name', $dialogue)->firstOrFail();
-        }
-
-        Log::debug('Agent::delegate() -> delegating to dialogue: ' . $dialogue->name);
-
-        $outgoingMessage = $dialogue->delegate($chat, $incomingMessage);
-
-        Log::debug('Agent::delegate() -> message from dialogue: ' . $outgoingMessage->content);
-
-        if ($outgoingMessage->persistContext)
-        {
-            $chat->agent()->associate($this);
-            $chat->dialogue()->associate($dialogue);
-        }
-
-        return $outgoingMessage;
     }
 }

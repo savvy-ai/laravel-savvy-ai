@@ -1,8 +1,8 @@
 <?php
 
-namespace SavvyAI\Contracts\Vector;
+namespace SavvyAI\Contracts;
 
-interface StoreContract
+interface VectorStoreContract
 {
     public function store(array $vectors, string $namespace, array $metadata = []): bool;
     public function search(array $vector, string $namespace, array $filter = []): array;

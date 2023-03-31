@@ -2,7 +2,8 @@
 
 namespace SavvyAI\Models;
 
-use SavvyAI\Features\Chatting\Reply;
+use SavvyAI\Contracts\ChatMessageContract;
+use SavvyAI\Features\Chatting\ChatReply;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,16 +13,10 @@ use SavvyAI\Features\Chatting\Role;
 /**
  * @property Chat $chat
  */
-class Message extends Model
+class Message extends Model implements ChatMessageContract
 {
     use HasUuids;
     use HasFactory;
-
-    public $persistContext   = true;
-    public $formattedAsReply = true;
-    public $totalTokensUsed  = 0;
-
-    public ?Reply $reply = null;
 
     protected $casts = [
         'is_read' => 'boolean',
@@ -35,15 +30,6 @@ class Message extends Model
         'content',
         'media',
     ];
-
-    protected $appends = [
-        'reply',
-    ];
-
-    public function getReplyAttribute()
-    {
-        return $this->reply;
-    }
 
     public function chat(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -63,27 +49,5 @@ class Message extends Model
 
         // Messages organized by the created date
         $query->orderBy('created_at', 'asc');
-    }
-
-    public static function fromReply(Reply $reply): self
-    {
-        $message = new Message([
-            'role'    => $reply->role(),
-            'content' => $reply->content(),
-        ]);
-
-        $message->reply = $reply;
-
-        return $message;
-    }
-
-    public function role(): Role
-    {
-        return $this->role;
-    }
-
-    public function content(): string
-    {
-        return $this->content;
     }
 }
