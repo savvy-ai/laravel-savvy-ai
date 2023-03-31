@@ -3,6 +3,7 @@
 namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatMessageContract;
@@ -14,34 +15,14 @@ trait Delegatable
 
     protected ?ChatDelegateContract $selectedDelegate;
 
-    public function getHumanId(): string
+    public function getDelegateId(): int|string
     {
-        return '';
-    }
-
-    public function getDelegateId(): string
-    {
-        return '';
-    }
-
-    public function getHumanName(): string
-    {
-        return '';
-    }
-
-    public function getDelegateName(): string
-    {
-        return sprintf('@%s()', $this->getHumanName());
-    }
-
-    public function getHumanDescription(): string
-    {
-        return '';
+        return Str::uuid();
     }
 
     public function getDelegateDescription(): string
     {
-        return '';
+        return 'A delegate that helps with some task @DelegateName()';
     }
 
     /**
@@ -107,15 +88,7 @@ trait Delegatable
 
             Log::debug('Bot::delegate() -> message from agent: ' . $outgoingMessage->content());
 
-            // Finish up
-            // 1. Save incoming and outgoing messages to the conversation
-            // $chat->messages()->save($incomingMessage);
-            // $chat->messages()->save($outgoingMessage);
-
-            // 2. Save the conversation because the agent can attach itself and the dialogue
-            // $chat->save();
-
-            $chat->addMessage($outgoingMessage)->persist();
+            $this->delegated($chat, $outgoingMessage);
 
             return $outgoingMessage;
         } catch (Throwable $throwable)
@@ -124,5 +97,10 @@ trait Delegatable
 
             throw $throwable; // return $chat->getLastMessage();
         }
+    }
+
+    public function delegated(ChatContract $chat, ChatMessageContract $message): void
+    {
+        //
     }
 }

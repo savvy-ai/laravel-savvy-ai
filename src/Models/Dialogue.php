@@ -43,6 +43,11 @@ class Dialogue extends Model implements ChatDelegateContract
         'stop'
     ];
 
+    public function getDelegateId(): int|string
+    {
+        return $this->id;
+    }
+
     public function getDelegateDescription(): string
     {
         return $this->classification;
@@ -75,25 +80,32 @@ class Dialogue extends Model implements ChatDelegateContract
 
         Log::debug('Dialogue::delegate() -> generating reply');
 
+        $this->maxTokens = 32;
+        $this->stop = null;
+
         $reply = $this->chat([
             new ChatMessage(Role::System, $prompt),
-            ...$chat->getMessages(),
+            ...$chat->getChatHistory(),
+            $incomingMessage,
         ]);
 
         $chat->addReply($reply);
 
         $outgoingMessage = ChatMessage::fromChatReply($reply);
 
-//        $this->maxTokens   = 16;
-//        $this->temperature = 0.0;
-//
-//        Log::debug('Dialogue::delegate() -> validating reply to ensure it is on topic');
-//
-//        $this->validateWithMessages([
-//            $incomingMessage->toArray(),
-//            $outgoingMessage->toArray(),
-//        ], $this->topic);
-//
+        $this->maxTokens   = 16;
+        $this->temperature = 0.0;
+        $this->stop        = ' ';
+
+        Log::debug('Dialogue::delegate() -> validating reply to ensure it is on topic');
+
+        $reply = $this->validateWithMessages([
+            $incomingMessage->asArray(),
+            $outgoingMessage->asArray(),
+        ], $this->topic);
+
+        $chat->addReply($reply);
+
 //        Log::debug('Dialogue::delegate() -> reply is on topic');
 //
 //        Event::dispatch('chat.message-sent', ['dialogue_id' => $this->id]);

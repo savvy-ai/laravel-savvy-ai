@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Traits;
 
+use Illuminate\Support\Str;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
@@ -23,6 +24,19 @@ trait Chatable
      * @var ?Throwable
      */
     private ?Throwable $throwable = null;
+
+    public function getChatId(): int|string
+    {
+        return Str::uuid();
+    }
+
+    /**
+     * @return ChatMessageContract[]
+     */
+    public function getChatHistory(): array
+    {
+        return [];
+    }
 
     /**
      * @return ChatMessageContract[]

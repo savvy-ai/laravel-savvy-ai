@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
+use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Traits\Delegatable;
 
 /**
@@ -32,6 +34,11 @@ class Chatbot extends Model implements ChatDelegateContract
 
     protected $appends = ['name'];
 
+    public function getDelegateId(): int|string
+    {
+        return $this->id;
+    }
+
     /**
      * @param string $name
      *
@@ -45,6 +52,19 @@ class Chatbot extends Model implements ChatDelegateContract
     public function delegates(): array
     {
         return $this->agents->all();
+    }
+
+    public function delegated(ChatContract $chat, ChatMessageContract $message): void
+    {
+        $chat->addMessage($message);
+
+        foreach ($chat->getMessages() as $message)
+        {
+            Message::query()->create([
+                'chat_id' => $chat->getChatId(),
+                ...$message->asArray()
+            ]);
+        }
     }
 
     public function getNameAttribute(): string

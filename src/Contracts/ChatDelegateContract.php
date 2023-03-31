@@ -4,15 +4,7 @@ namespace SavvyAI\Contracts;
 
 interface ChatDelegateContract
 {
-    public function getHumanId(): string;
-
-    public function getDelegateId(): string;
-
-    public function getHumanName(): string;
-
-    public function getDelegateName(): string;
-
-    public function getHumanDescription(): string;
+    public function getDelegateId(): int|string;
 
     public function getDelegateDescription(): string;
 
@@ -37,4 +29,6 @@ interface ChatDelegateContract
      * @return ChatMessageContract
      */
     public function delegate(ChatContract $chat): ChatMessageContract;
+
+    public function delegated(ChatContract $chat, ChatMessageContract $message): void;
 }

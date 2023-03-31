@@ -35,6 +35,11 @@ class Agent extends Model implements ChatDelegateContract
         'stop'
     ];
 
+    public function getDelegateId(): int|string
+    {
+        return $this->id;
+    }
+
     public function getDelegateByName(string $name): ChatDelegateContract
     {
         return $this->dialogues->where('name', $name)->first();

@@ -4,6 +4,13 @@ namespace SavvyAI\Contracts;
 
 interface ChatContract
 {
+    public function getChatId(): int|string;
+
+    /**
+     * @return ChatMessageContract[]
+     */
+    public function getChatHistory(): array;
+
     /**
      * @return ChatMessageContract[]
      */

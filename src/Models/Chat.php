@@ -33,9 +33,14 @@ class Chat extends Model implements ChatContract
         'dialogue_id',
     ];
 
-    public function getMessages(): array
+    public function getChatId(): int|string
     {
-        $history = $this->messages
+        return $this->id;
+    }
+
+    public function getChatHistory(): array
+    {
+        return $this->messages
             ->map(function (Message $message) {
                 return new ChatMessage(
                     Role::from($message->role),
@@ -43,10 +48,6 @@ class Chat extends Model implements ChatContract
                 );
             })
             ->toArray();
-
-        $history[] = $this->getLastMessage();
-
-        return $history;
     }
 
     public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany
