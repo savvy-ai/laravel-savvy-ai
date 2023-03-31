@@ -24,22 +24,60 @@
 |
 */
 
+use OpenAI\Client;
+use OpenAI\Contracts\Transporter;
+use OpenAI\ValueObjects\ApiKey;
+use OpenAI\ValueObjects\Transporter\BaseUri;
+use OpenAI\ValueObjects\Transporter\Headers;
+use OpenAI\ValueObjects\Transporter\Payload;
+use OpenAI\ValueObjects\Transporter\QueryParams;
+use Psr\Http\Message\ResponseInterface;
+
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
-function something()
+function mockClient(string $method, string $resource, array $params, array|string|ResponseInterface $response, $methodName = 'requestObject'): Client
 {
-    // ..
+    $transporter = Mockery::mock(Transporter::class);
+
+    $transporter
+        ->shouldReceive($methodName)
+        ->once()
+        ->withArgs(function (Payload $payload) use ($method, $resource) {
+            $baseUri = BaseUri::from('api.openai.com/v1');
+            $headers = Headers::withAuthorization(ApiKey::from('foo'));
+            $queryParams = QueryParams::create();
+
+            $request = $payload->toRequest($baseUri, $headers, $queryParams);
+
+            return $request->getMethod() === $method && $request->getUri()->getPath() === "/v1/$resource";
+        })->andReturn($response);
+
+    return new Client($transporter);
+}
+
+function chatCompletion(): array
+{
+    return [
+        'id' => 'chatcmpl-123',
+        'object' => 'chat.completion',
+        'created' => 1677652288,
+        'model' => 'gpt-3.5-turbo',
+        'choices' => [
+            [
+                'index' => 0,
+                'message' => [
+                    'role' => 'assistant',
+                    'content' => "\n\nHello there, how may I assist you today?",
+                ],
+                'finish_reason' => 'stop',
+            ],
+        ],
+        'usage' => [
+            'prompt_tokens' => 9,
+            'completion_tokens' => 12,
+            'total_tokens' => 21,
+        ],
+    ];
 }

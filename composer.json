@@ -19,6 +19,11 @@
             "SavvyAI\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "SavvyAI\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Selvin Ortiz",
@@ -58,6 +63,7 @@
         }
     },
     "require-dev": {
-        "pestphp/pest": "^2.3"
+        "pestphp/pest": "^2.3",
+        "mockery/mockery": "^1.5"
     }
 }

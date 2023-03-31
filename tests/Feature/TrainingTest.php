@@ -1,6 +1,6 @@
 <?php
 
-use SavvyAI\DummyForTraining;
+use SavvyAI\Tests\TestClasses\DummyForTraining;
 
 it('summarizes training data', function () {
     $input = <<<EOT
@@ -26,9 +26,7 @@ EOT;
         "When outdoors, clean up after yourselves. No fireworks allowed due to dry conditions and heavily wooded areas. All cigarettes should be picked up and disposed of properly or $100 fine applies."
     ];
 
-    $dummy = new DummyForTraining();
-
-    $sentencesArray = $dummy->summarizeForTraining($input, 128, 512);
+    $sentencesArray = (new DummyForTraining())->summarizeForTraining($input, 128, 512);
 
     expect($sentencesArray)->toBe($output);
 });
