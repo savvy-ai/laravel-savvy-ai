@@ -5,7 +5,7 @@ namespace SavvyAI\Traits;
 trait ExpandsPromptSnippets
 {
     const NAMESPACE       = '\\SavvyAI\\Snippets\\';
-    const CAST_REGEX      = '/(\w+):\s?(\w+)/';
+    const CAST_REGEX      = '/([a-zA-Z0-9_-]+):\s?(\w+)/';
     const SNIPPET_REGEX   = '/<(\S+)(\s+[^>]+)?\s*\/?>/';
     const ATTRIBUTE_REGEX = '/([^\s=]+)="([^"]+)"/';
 
@@ -34,6 +34,17 @@ trait ExpandsPromptSnippets
         return $prompt;
     }
 
+    /**
+     * Given a string value, attempt to cast it to the appropriate type
+     *
+     * @example
+     * <ConnectionSpeed cost="29.99" zones="zone1: Arizona, zone2: California, zone3: Nevada" />
+     * [cost => 29.99, zones => [zone1 => Arizona, zone2 => California, zone3 => Nevada]]
+     *
+     * @param string $value
+     *
+     * @return mixed
+     */
     public function cast(string $value): mixed
     {
         if (is_numeric($value))

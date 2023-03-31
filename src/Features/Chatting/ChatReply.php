@@ -2,41 +2,34 @@
 
 namespace SavvyAI\Features\Chatting;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use SavvyAI\Models\Agent;
-use SavvyAI\Models\Dialogue;
-use SavvyAI\Models\Message;
+use SavvyAI\Contracts\ChatReplyContract;
 
 /**
  * Represents a response from the completions API
  *
- * Class Reply
+ * Class ChatReply
  *
  * @author Selvin Ortiz <selvin@savvyai.com>
  * @author Brennen Phippen <brennen@savvyai.com>
  * @package SavvyAI\Chat
  */
-class Reply
+class ChatReply implements ChatReplyContract
 {
     protected array $usage;
     protected array $message;
 
     /**
-     * @param array $result Result from the completions API request
+     * @param array $response Result from the completions API request
      */
-    public function __construct(array $result)
+    public static function fromAIServiceResponse(array $response): ChatReplyContract
     {
-        $this->usage   = $result['usage'] ?? [];
-        $this->message = $result['choices'][0]['message'] ?? [];
-    }
+        $instance = new static();
 
-    public function message(): Message
-    {
-        return new Message([
-            'role' => $this->role(),
-            'content' => $this->content(),
-        ]);
+        $instance->usage   = $response['usage']->toArray() ?? [];
+        $instance->message = $response['choices'][0]->message->toArray() ?? [];
+
+        return $instance;
     }
 
     public function role(): string
@@ -47,6 +40,18 @@ class Reply
     public function content(): string
     {
         return $this->message['content'] ?? '';
+    }
+
+    public function extractDelegateName(): string
+    {
+        preg_match('/@([a-zA-Z]+)\(([^)]+)?\)/', $this->content(), $matches);
+
+        return $matches[1] ?? '';
+    }
+
+    public function isOnTopic(): bool
+    {
+        return mb_stripos($this->content(), '@OnTopic') !== false;
     }
 
     public function isContextUnknown(string $expected = null): bool
@@ -66,21 +71,6 @@ class Reply
         return false;
     }
 
-    public function isOnTopic(): bool
-    {
-        return mb_stripos($this->content(), '@OnTopic') !== false;
-    }
-
-    public function agent(): ?Agent
-    {
-        return Agent::where('name', $this->entity()['class'] ?? null)->first();
-    }
-
-    public function dialogue(): ?Dialogue
-    {
-        return Dialogue::where('name', $this->entity()['class'] ?? null)->first();
-    }
-
     public function totalTokensUsed(): int
     {
         return $this->usage['total_tokens'] ?? 0;
@@ -94,17 +84,5 @@ class Reply
     public function completionTokensUsed(): int
     {
         return $this->usage['completion_tokens'] ?? 0;
-    }
-
-    protected function entity()
-    {
-        preg_match('/@([a-zA-Z]+)\(([^)]+)?\)/', $this->content(), $matches);
-
-        Log::debug('Reply::entity() -> '. $this->content(), $matches);
-
-        return [
-            'class' => $matches[1] ?? '',
-            'input' => $matches[2] ?? '',
-        ];
     }
 }

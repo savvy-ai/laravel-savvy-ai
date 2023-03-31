@@ -3,15 +3,12 @@
 namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use SavvyAI\Models\Chat;
-use SavvyAI\Models\Chatbot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property \SavvyAI\Modles\User $user
- * @property \SavvyAI\Models\Chat[] $chats
- * @property \SavvyAI\Models\Chatbot $chatbot
+ * @property Chat[] $chats
+ * @property Chatbot $chatbot
  */
 class Trainable extends Model
 {
@@ -36,11 +33,6 @@ class Trainable extends Model
     protected $appends = [
         'has_been_trained',
     ];
-
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function chatbot(): \Illuminate\Database\Eloquent\Relations\HasOne
     {

@@ -3,9 +3,11 @@
 namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Blade;
+use SavvyAI\Contracts\ChatMessageContract;
+use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Exceptions\UnknownContextException;
-use SavvyAI\Contracts\AI\ReplyContract;
-use SavvyAI\Reply;
+use SavvyAI\Features\Chatting\ChatReply;
+use SavvyAI\Features\Chatting\Role;
 
 /**
  * Makes calls to the OpenAI API to classify text, validate replies, and to chat
@@ -34,11 +36,10 @@ You MUST classify the text according to the following rules:
 EOT;
 
     protected string $topicValidationPrompt = <<<'EOT'
-Carefully analyze the following conversation to determine whether or not it is on topic.
+Classify whether or not the given conversation is on topic.
+Provide a label of @OnTopic() or @OffTopic(), where @OnTopic() means completely on-topic and @OffTopic() means off-topic.
 
-- The topic of the conversation is: "{!! $topic !!}"
-- If the conversation is on topic, you MUST say "@OnTopic()"
-- If the conversation is off topic, you MUST say "@OffTopic()"
+Note that the topic is "{!! $topic !!}".
 EOT;
 
     /**
@@ -48,14 +49,12 @@ EOT;
      * @param string[] $subjects List of subjects to classify
      * @param string|null $expectedStringInReply
      *
-     * @return ReplyContract
+     * @return ChatReplyContract
      *
      * @throws UnknownContextException
      */
-    public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ReplyContract
+    public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ChatReplyContract
     {
-        $prompt = Blade::render($this->classificationPrompt, compact('subjects'));
-
         $result = ai()->chat()->create([
             'model'             => $this->model,
             'max_tokens'        => $this->maxTokens,
@@ -66,7 +65,7 @@ EOT;
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => $prompt,
+                    'content' => Blade::render($this->classificationPrompt, compact('subjects')),
                 ],
                 [
                     'role' => 'user',
@@ -75,7 +74,7 @@ EOT;
             ],
         ]);
 
-        $reply = Reply::fromClientResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $result);
 
         if ($reply->isContextUnknown($expectedStringInReply))
         {
@@ -89,11 +88,27 @@ EOT;
      * @param string $text
      * @param string $topic
      *
-     * @return ReplyContract
+     * @return ChatReplyContract
      *
      * @throws UnknownContextException
      */
-    public function validate(string $text, string $topic): ReplyContract
+    public function validate(string $text, string $topic): ChatReplyContract
+    {
+        return $this->validateWithMessages([
+            'role' => Role::User->value,
+            'content' => $text
+        ], $topic);
+    }
+
+    /**
+     * @param array<int, array<string, string>> $messages
+     * @param string $topic
+     *
+     * @return ChatReplyContract
+     *
+     * @throws UnknownContextException
+     */
+    public function validateWithMessages(array $messages, string $topic): ChatReplyContract
     {
         $result = ai()->chat()->create([
             'model'             => $this->model,
@@ -102,21 +117,22 @@ EOT;
             'presence_penalty'  => $this->presencePenalty,
             'frequency_penalty' => $this->frequencyPenalty,
             'stop'              => $this->stop ?? null,
-            'messages' => [
+            'messages' => array_merge([
                 [
                     'role' => 'system',
                     'content' => Blade::render($this->topicValidationPrompt, compact('topic')),
                 ],
-                [
-                    'role' => 'user',
-                    'content' => $text,
-                ]
-            ],
+            ], $messages),
         ]);
 
-        $reply = Reply::fromClientResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $result);
 
         if ($reply->isContextUnknown())
+        {
+            throw new UnknownContextException($reply->content());
+        }
+
+        if (!$reply->isOnTopic())
         {
             throw new UnknownContextException($reply->content());
         }
@@ -140,25 +156,29 @@ EOT;
     }
 
     /**
-     * @param array $messages
+     * @param ChatMessageContract[] $messages
      *
-     * @return ReplyContract
+     * @return ChatReplyContract
      *
      * @throws UnknownContextException
      */
-    public function chat(array $messages = []): ReplyContract
+    public function chat(array $messages = []): ChatReplyContract
     {
-        $result = ai()->chat()->create([
+        $messages = collect($messages)
+            ->map(fn (ChatMessageContract $message) => $message->asArray())
+            ->toArray();
+
+        $response = ai()->chat()->create([
             'model'             => $this->model,
             'max_tokens'        => $this->maxTokens,
             'temperature'       => $this->temperature,
             'presence_penalty'  => $this->presencePenalty,
             'frequency_penalty' => $this->frequencyPenalty,
             'stop'              => $this->stop ?? null,
-            'messages' => $messages,
+            'messages'          => $messages,
         ]);
 
-        $reply = Reply::fromClientResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $response);
 
         if ($reply->isContextUnknown())
         {
