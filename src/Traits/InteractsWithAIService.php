@@ -3,6 +3,7 @@
 namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Blade;
+use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\ChatReply;
@@ -155,7 +156,7 @@ EOT;
     }
 
     /**
-     * @param array $messages
+     * @param ChatMessageContract[] $messages
      *
      * @return ChatReplyContract
      *
@@ -163,17 +164,21 @@ EOT;
      */
     public function chat(array $messages = []): ChatReplyContract
     {
-        $result = ai()->chat()->create([
+        $messages = collect($messages)
+            ->map(fn (ChatMessageContract $message) => $message->asArray())
+            ->toArray();
+
+        $response = ai()->chat()->create([
             'model'             => $this->model,
             'max_tokens'        => $this->maxTokens,
             'temperature'       => $this->temperature,
             'presence_penalty'  => $this->presencePenalty,
             'frequency_penalty' => $this->frequencyPenalty,
             'stop'              => $this->stop ?? null,
-            'messages' => $messages,
+            'messages'          => $messages,
         ]);
 
-        $reply = ChatReply::fromAIServiceResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $response);
 
         if ($reply->isContextUnknown())
         {

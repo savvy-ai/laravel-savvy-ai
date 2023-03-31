@@ -72,6 +72,11 @@ trait Delegatable
         return $this;
     }
 
+    public function getDelegateByName(string $name): ChatDelegateContract
+    {
+        return $this;
+    }
+
     public function delegate(ChatContract $chat): ChatMessageContract
     {
         $incomingMessage = $chat->getLastMessage();
@@ -82,10 +87,16 @@ trait Delegatable
             {
                 Log::debug('Bot::delegate() -> finding a suitable agent');
 
-                $reply    = $this->classify($incomingMessage->content()  , $this->delegates());
-                $delegate = $this->getDelegateByName($reply->delegate());
+                $delegates = collect($this->delegates())->map(function (ChatDelegateContract $delegate) {
+                    return $delegate->getDelegateDescription();
+                })->toArray();
+
+                $reply    = $this->classify($incomingMessage->content(), $delegates);
+                $delegate = $this->getDelegateByName($reply->extractDelegateName());
 
                 $this->setSelectedDelegate($delegate);
+
+                $chat->addReply($reply);
             }
 
             Log::debug('Bot::delegate() -> delegating to agent: ' . get_class($this->getSelectedDelegate()));
@@ -111,7 +122,7 @@ trait Delegatable
         {
             Log::error($throwable->getMessage());
 
-            return $chat->getLastMessage();
+            throw $throwable; // return $chat->getLastMessage();
         }
     }
 }

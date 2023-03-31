@@ -2,18 +2,19 @@
 
 namespace SavvyAI\Models;
 
-use Exception;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
+use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
+use SavvyAI\Traits\Delegatable;
 use SavvyAI\Traits\ExpandsPromptSnippets;
 use SavvyAI\Traits\InteractsWithAIService;
 
@@ -24,6 +25,7 @@ class Dialogue extends Model implements ChatDelegateContract
 {
     use HasUuids;
     use HasFactory;
+    use Delegatable;
     use InteractsWithAIService;
     use ExpandsPromptSnippets;
 
@@ -41,6 +43,10 @@ class Dialogue extends Model implements ChatDelegateContract
         'stop'
     ];
 
+    public function getDelegateDescription(): string
+    {
+        return $this->classification;
+    }
 
     public function delegates(): array
     {
@@ -57,16 +63,10 @@ class Dialogue extends Model implements ChatDelegateContract
         return $this->belongsTo(Agent::class);
     }
 
-    /**
-     * @param Chat $chat
-     * @param ChatMessageContract $incomingMessage
-     * @param ?Exception $previouslyThrownException
-     * @return ChatMessageContract
-     *
-     * @throws OffTopicException|UnknownContextException
-     */
-    public function delegate(Chat $chat, ChatMessageContract $incomingMessage, Exception $previouslyThrownException = null): ChatMessageContract
+    public function delegate(ChatContract $chat): ChatMessageContract
     {
+        $incomingMessage = $chat->getLastMessage();
+
         Log::debug('Dialogue::delegate()');
 
         Log::debug('Dialogue::delegate() -> expanding prompt snippets');
@@ -75,33 +75,28 @@ class Dialogue extends Model implements ChatDelegateContract
 
         Log::debug('Dialogue::delegate() -> generating reply');
 
-
-        $messages = $chat->messages()
-            ->thread($this)
-            ->get()
-            ->map(fn($message) => ['role' => $message->role, 'content' => $message->content]);
-
         $reply = $this->chat([
-            ['role' => Role::System->value, 'content' => $prompt],
-            ...$messages->toArray(),
-            ['role' => Role::User->value, 'content' => $incomingMessage->content()],
+            new ChatMessage(Role::System, $prompt),
+            ...$chat->getMessages(),
         ]);
+
+        $chat->addReply($reply);
 
         $outgoingMessage = ChatMessage::fromChatReply($reply);
 
-        $this->maxTokens = 16;
-        $this->temperature = 0.0;
-
-        Log::debug('Dialogue::delegate() -> validating reply to ensure it is on topic');
-
-        $this->validateWithMessages([
-            ['role' => Role::User->value, 'content' => $incomingMessage->content()],
-            ['role' => Role::Assistant->value, 'content' => $outgoingMessage->content()],
-        ], $this->topic);
-
-        Log::debug('Dialogue::delegate() -> reply is on topic');
-
-        Event::dispatch('chat.message-sent', ['dialogue_id' => $this->id]);
+//        $this->maxTokens   = 16;
+//        $this->temperature = 0.0;
+//
+//        Log::debug('Dialogue::delegate() -> validating reply to ensure it is on topic');
+//
+//        $this->validateWithMessages([
+//            $incomingMessage->toArray(),
+//            $outgoingMessage->toArray(),
+//        ], $this->topic);
+//
+//        Log::debug('Dialogue::delegate() -> reply is on topic');
+//
+//        Event::dispatch('chat.message-sent', ['dialogue_id' => $this->id]);
 
         // $outgoingMessage->dialogue_id = $this->id;
 

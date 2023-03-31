@@ -10,16 +10,23 @@ interface ChatContract
     public function getMessages(): array;
 
     /**
-     * @return ChatMessageContract
+     * @return ?ChatMessageContract
      */
-    public function getLastMessage(): ChatMessageContract;
+    public function getLastMessage(): ?ChatMessageContract;
 
     /**
      * @param ChatMessageContract $message
      *
      * @return ChatContract
      */
-    public function addMessage(ChatMessageContract $message): self;
+    public function addMessage(ChatMessageContract $message): ChatContract;
+
+    /**
+     * @param ChatMessageContract[] $messages
+     *
+     * @return ChatContract
+     */
+    public function addMessages(array $messages): ChatContract;
 
     /**
      * @return ChatReplyContract[]
@@ -31,7 +38,9 @@ interface ChatContract
      *
      * @return ChatContract
      */
-    public function addReply(ChatReplyContract $reply): self;
+    public function addReply(ChatReplyContract $reply): ChatContract;
+
+    public function getLastReply(): ?ChatReplyContract;
 
     /**
      * @return bool

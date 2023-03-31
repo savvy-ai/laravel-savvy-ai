@@ -9,17 +9,13 @@ class ChatMessage implements ChatMessageContract
 {
     protected Role $role = Role::User;
     protected string $content = '';
-    protected array $replies = [];
 
-    public static function fromChatReply(ChatReplyContract $reply): self
+    public static function fromChatReply(ChatReplyContract $reply): ChatMessageContract
     {
-        $instance = new self();
-
-        $instance->role      = Role::from($reply->role());
-        $instance->content   = $reply->content();
-        $instance->replies[] = $reply;
-
-        return $instance;
+        return new self(
+            Role::from($reply->role()),
+            $reply->content(),
+        );
     }
 
     public function __construct(Role $role = Role::User, string $content = '')
@@ -28,27 +24,26 @@ class ChatMessage implements ChatMessageContract
         $this->content = $content;
     }
 
-    public function role(Role $role = null): Role|self
+    public function role(): Role
     {
-        if ($role !== null)
-        {
-            $this->role = $role;
-
-            return $this;
-        }
-
         return $this->role;
     }
 
-    public function content(string $content = null): string|self
+    public function content(): string
     {
-        if ($content !== null)
-        {
-            $this->content = $content;
-
-            return $this;
-        }
-
         return $this->content;
+    }
+
+    /**
+     * Get the instance as an array
+     *
+     * @return array<string, string>
+     */
+    public function asArray(): array
+    {
+        return [
+            'role'    => $this->role->value,
+            'content' => $this->content,
+        ];
     }
 }

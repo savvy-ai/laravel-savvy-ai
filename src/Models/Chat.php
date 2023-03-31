@@ -3,7 +3,10 @@
 namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatContract;
+use SavvyAI\Features\Chatting\ChatMessage;
+use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Models\Agent;
 use SavvyAI\Models\Dialogue;
 use SavvyAI\Models\Trainable;
@@ -13,7 +16,7 @@ use SavvyAI\Traits\Chatable;
 
 /**
  * @property Trainable $trainable
- * @property Message[] $messages
+ * @property Message[]|Collection $messages
  * @property Agent $agent
  * @property Dialogue $dialogue
  */
@@ -29,6 +32,22 @@ class Chat extends Model implements ChatContract
         'agent_id',
         'dialogue_id',
     ];
+
+    public function getMessages(): array
+    {
+        $history = $this->messages
+            ->map(function (Message $message) {
+                return new ChatMessage(
+                    Role::from($message->role),
+                    $message->content,
+                );
+            })
+            ->toArray();
+
+        $history[] = $this->getLastMessage();
+
+        return $history;
+    }
 
     public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

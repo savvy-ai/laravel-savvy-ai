@@ -42,6 +42,18 @@ class ChatReply implements ChatReplyContract
         return $this->message['content'] ?? '';
     }
 
+    public function extractDelegateName(): string
+    {
+        preg_match('/@([a-zA-Z]+)\(([^)]+)?\)/', $this->content(), $matches);
+
+        return $matches[1] ?? '';
+    }
+
+    public function isOnTopic(): bool
+    {
+        return mb_stripos($this->content(), '@OnTopic') !== false;
+    }
+
     public function isContextUnknown(string $expected = null): bool
     {
         if (Str::contains($this->content(), '@Unknown', true))
@@ -59,27 +71,6 @@ class ChatReply implements ChatReplyContract
         return false;
     }
 
-    public function isOnTopic(): bool
-    {
-        return mb_stripos($this->content(), '@OnTopic') !== false;
-    }
-
-
-    public function agent(): string
-    {
-        return $this->entity()['class'] ?? '';
-    }
-
-    public function dialogue(): string
-    {
-        return $this->entity()['class'] ?? '';
-    }
-
-    public function delegate(): string
-    {
-        return $this->entity()['class'] ?? '';
-    }
-
     public function totalTokensUsed(): int
     {
         return $this->usage['total_tokens'] ?? 0;
@@ -93,15 +84,5 @@ class ChatReply implements ChatReplyContract
     public function completionTokensUsed(): int
     {
         return $this->usage['completion_tokens'] ?? 0;
-    }
-
-    protected function entity(): array
-    {
-        preg_match('/@([a-zA-Z]+)\(([^)]+)?\)/', $this->content(), $matches);
-
-        return [
-            'class' => $matches[1] ?? '',
-            'input' => $matches[2] ?? '',
-        ];
     }
 }

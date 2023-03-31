@@ -24,6 +24,5 @@ interface ChatReplyContract
     public function isOnTopic(): bool;
     public function isContextUnknown(string $expected = null): bool;
 
-    public function agent(): string;
-    public function dialogue(): string;
+    public function extractDelegateName(): string;
 }

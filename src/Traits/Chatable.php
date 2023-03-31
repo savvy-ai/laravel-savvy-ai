@@ -12,12 +12,12 @@ trait Chatable
     /**
      * @var ChatMessageContract[]
      */
-    private array $messages = [];
+    private array $chatMessages = [];
 
     /**
      * @var ChatReplyContract[]
      */
-    private array $replies  = [];
+    private array $chatReplies  = [];
 
     /**
      * @var ?Throwable
@@ -29,13 +29,12 @@ trait Chatable
      */
     public function getMessages(): array
     {
-        return $this->messages;
+        return $this->chatMessages;
     }
-
 
     public function getLastMessage(): ?ChatMessageContract
     {
-        return last($this->messages);
+        return last($this->chatMessages);
     }
 
     /**
@@ -45,7 +44,7 @@ trait Chatable
      */
     public function addMessage(ChatMessageContract $message): ChatContract
     {
-        $this->messages[] = $message;
+        $this->chatMessages[] = $message;
 
         return $this;
     }
@@ -57,19 +56,24 @@ trait Chatable
      */
     public function addMessages(array $messages): ChatContract
     {
-        $this->messages[] = array_merge($this->messages, $messages);
+        $this->chatMessages[] = array_merge($this->chatMessages, $messages);
 
         return $this;
     }
 
     public function getReplies(): array
     {
-        return $this->replies;
+        return $this->chatReplies;
+    }
+
+    public function getLastReply(): ?ChatReplyContract
+    {
+        return last($this->chatReplies);
     }
 
     public function addReply(ChatReplyContract $reply): ChatContract
     {
-        $this->replies[] = $reply;
+        $this->chatReplies[] = $reply;
 
         return $this;
     }
@@ -81,7 +85,7 @@ trait Chatable
      */
     public function addReplies(array $replies): ChatContract
     {
-        $this->replies[] = $replies;
+        $this->chatReplies[] = $replies;
 
         return $this;
     }

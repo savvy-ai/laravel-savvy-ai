@@ -2,18 +2,15 @@
 
 namespace SavvyAI\Models;
 
-use SavvyAI\Contracts\ChatMessageContract;
-use SavvyAI\Features\Chatting\ChatReply;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use SavvyAI\Features\Chatting\Role;
 
 /**
  * @property Chat $chat
  */
-class Message extends Model implements ChatMessageContract
+class Message extends Model
 {
     use HasUuids;
     use HasFactory;

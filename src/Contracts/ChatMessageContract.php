@@ -14,9 +14,14 @@ use SavvyAI\Features\Chatting\Role;
  */
 interface ChatMessageContract
 {
-    public static function fromChatReply(ChatReplyContract $reply): self;
+    public static function fromChatReply(ChatReplyContract $reply): ChatMessageContract;
 
-    public function role(Role $role = null): Role|self;
+    public function role(): Role;
 
-    public function content(string $content = null): string|self;
+    public function content(): string;
+
+    /**
+     * @return array<string, string>
+     */
+    public function asArray(): array;
 }
