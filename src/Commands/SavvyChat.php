@@ -9,6 +9,7 @@ use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Models\Chat;
 use SavvyAI\Models\Message;
 use SavvyAI\Models\Trainable;
+use Throwable;
 
 class SavvyChat extends Command
 {
@@ -30,9 +31,11 @@ class SavvyChat extends Command
      * Execute the console command.
      *
      * @return int
+     * @throws Throwable
      */
     public function handle(): int
     {
+        /** @var Trainable $trainable */
         $trainable = Trainable::query()
             ->where('id', $this->argument('trainable_id'))
             ->with('chatbot.agents.dialogues')
@@ -40,6 +43,7 @@ class SavvyChat extends Command
 
         /** @var ChatContract $chat */
         $chat = Chat::query()
+            ->with(['agent', 'dialogue'])
             ->firstOrCreate([
                 'id' => $this->argument('chat_id'),
                 'trainable_id' => $trainable->id,
@@ -59,9 +63,17 @@ class SavvyChat extends Command
                 break;
             }
 
-            $chat->addMessage(new ChatMessage(Role::User, $prompt));
+            $chatbot  = $trainable->chatbot;
+            $agent    = $chat->agent;
+            $dialogue = $chat->dialogue;
 
-            $message = $trainable->chatbot->delegate($chat);
+            if ($agent && $dialogue)
+            {
+                $agent->setSelectedDelegate($dialogue);
+                $chatbot->setSelectedDelegate($agent);
+            }
+
+            $message = $chat->reply($trainable->chatbot, new ChatMessage(Role::User, $prompt));
 
             $this->info(sprintf(' Savvy: %s > %s', PHP_EOL, $message->content()));
         }

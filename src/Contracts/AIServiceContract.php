@@ -7,7 +7,8 @@ namespace SavvyAI\Contracts;
  *
  * @author Selvin Ortiz <selvin@savvyai.com>
  * @author Brennen Phippen <brennen@savvyai.com>
- * @package SavvyAI\Contracts\AI
+ *
+ * @package SavvyAI\Contracts
  */
 interface AIServiceContract
 {

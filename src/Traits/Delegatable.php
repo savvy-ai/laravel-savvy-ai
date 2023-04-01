@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatMessageContract;
+use SavvyAI\Exceptions\UnknownContextException;
 use Throwable;
 
 trait Delegatable
@@ -58,49 +59,37 @@ trait Delegatable
         return $this;
     }
 
+    /**
+     * @throws UnknownContextException
+     */
     public function delegate(ChatContract $chat): ChatMessageContract
     {
         $incomingMessage = $chat->getLastMessage();
 
-        try
+        if (!$this->hasSelectedDelegate())
         {
-            if (!$this->hasSelectedDelegate())
-            {
-                Log::debug('Bot::delegate() -> finding a suitable agent');
+            Log::debug('Bot::delegate() -> finding a suitable agent');
 
-                $delegates = collect($this->delegates())->map(function (ChatDelegateContract $delegate) {
-                    return $delegate->getDelegateDescription();
-                })->toArray();
+            $delegates = collect($this->delegates())->map(function (ChatDelegateContract $delegate) {
+                return $delegate->getDelegateDescription();
+            })->toArray();
 
-                $reply    = $this->classify($incomingMessage->content(), $delegates);
-                $delegate = $this->getDelegateByName($reply->extractDelegateName());
+            $reply = $this->classify($incomingMessage->content(), $delegates);
+            $delegate = $this->getDelegateByName($reply->extractDelegateName());
 
-                $this->setSelectedDelegate($delegate);
+            $this->setSelectedDelegate($delegate);
 
-                $chat->addReply($reply);
-            }
-
-            Log::debug('Bot::delegate() -> delegating to agent: ' . get_class($this->getSelectedDelegate()));
-
-            $outgoingMessage = $this
-                ->getSelectedDelegate()
-                ->delegate($chat);
-
-            Log::debug('Bot::delegate() -> message from agent: ' . $outgoingMessage->content());
-
-            $this->delegated($chat, $outgoingMessage);
-
-            return $outgoingMessage;
-        } catch (Throwable $throwable)
-        {
-            Log::error($throwable->getMessage());
-
-            throw $throwable; // return $chat->getLastMessage();
+            $chat->addReply($reply);
         }
-    }
 
-    public function delegated(ChatContract $chat, ChatMessageContract $message): void
-    {
-        //
+        Log::debug('Bot::delegate() -> delegating to agent: ' . get_class($this->getSelectedDelegate()));
+
+        $outgoingMessage = $this
+            ->getSelectedDelegate()
+            ->delegate($chat);
+
+        Log::debug('Bot::delegate() -> message from agent: ' . $outgoingMessage->content());
+
+        return $outgoingMessage;
     }
 }

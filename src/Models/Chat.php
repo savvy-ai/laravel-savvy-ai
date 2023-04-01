@@ -5,6 +5,7 @@ namespace SavvyAI\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatContract;
+use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Models\Agent;
@@ -48,6 +49,23 @@ class Chat extends Model implements ChatContract
                 );
             })
             ->toArray();
+    }
+
+    public function persist(ChatDelegateContract $delegate): bool
+    {
+        // Save messages to history
+        foreach ($this->getMessages() as $message)
+        {
+            $this->messages()->create($message->asArray());
+        }
+
+        // Save delegates to chat context
+        $this->agent_id = $delegate->getSelectedDelegate()->id ?? null;
+        $this->dialogue_id = $delegate->getSelectedDelegate()->getSelectedDelegate()->id ?? null;
+
+        $this->save();
+
+        return true;
     }
 
     public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany

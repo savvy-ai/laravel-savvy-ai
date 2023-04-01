@@ -12,6 +12,16 @@ use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Traits\Delegatable;
 
 /**
+ * @property string $id
+ * @property string $trainable_id
+ * @property string $prompt
+ * @property string $model
+ * @property int $max_tokens
+ * @property float $temperature
+ * @property float $presence_penalty
+ * @property float $frequency_penalty
+ * @property string $stop
+ *
  * @property Trainable $trainable
  * @property Agent[]|Collection $agents
  */
@@ -52,19 +62,6 @@ class Chatbot extends Model implements ChatDelegateContract
     public function delegates(): array
     {
         return $this->agents->all();
-    }
-
-    public function delegated(ChatContract $chat, ChatMessageContract $message): void
-    {
-        $chat->addMessage($message);
-
-        foreach ($chat->getMessages() as $message)
-        {
-            Message::query()->create([
-                'chat_id' => $chat->getChatId(),
-                ...$message->asArray()
-            ]);
-        }
     }
 
     public function getNameAttribute(): string

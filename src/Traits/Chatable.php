@@ -4,6 +4,7 @@ namespace SavvyAI\Traits;
 
 use Illuminate\Support\Str;
 use SavvyAI\Contracts\ChatContract;
+use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
 use Throwable;
@@ -18,12 +19,35 @@ trait Chatable
     /**
      * @var ChatReplyContract[]
      */
-    private array $chatReplies  = [];
+    private array $chatReplies = [];
 
     /**
-     * @var ?Throwable
+     * @var array
      */
-    private ?Throwable $throwable = null;
+    private array $chatContext = [];
+
+    public function reply(ChatDelegateContract $delegate, ChatMessageContract $message): ?ChatMessageContract
+    {
+        $this->chatMessages = [];
+        $this->chatReplies = [];
+        $this->chatContext = [];
+
+        try
+        {
+            $this->addMessage($message);
+
+            $message = $delegate->delegate($this);
+
+            $this->addMessage($message);
+
+            $this->persist($delegate);
+
+            return $message;
+        } catch (Throwable $throwable)
+        {
+            throw $throwable;
+        }
+    }
 
     public function getChatId(): int|string
     {
@@ -105,14 +129,11 @@ trait Chatable
     }
 
     /**
+     * @param ChatDelegateContract $delegate
+     *
      * @return bool
      */
-    public function isError(): bool
-    {
-        return isset($this->throwable);
-    }
-
-    public function persist(): bool
+    public function persist(ChatDelegateContract $delegate): bool
     {
         return true;
     }

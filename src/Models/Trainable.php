@@ -2,11 +2,20 @@
 
 namespace SavvyAI\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @property string $id
+ * @property string $user_id
+ * @property string $name
+ * @property string $handle
+ * @property bool $is_training
+ * @property DateTime $trained_at
+ * @property DateTime $published_at
+ *
  * @property Chat[] $chats
  * @property Chatbot $chatbot
  */

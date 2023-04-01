@@ -68,6 +68,10 @@ class Dialogue extends Model implements ChatDelegateContract
         return $this->belongsTo(Agent::class);
     }
 
+    /**
+     * @throws UnknownContextException
+     * @throws OffTopicException
+     */
     public function delegate(ChatContract $chat): ChatMessageContract
     {
         $incomingMessage = $chat->getLastMessage();
@@ -106,11 +110,8 @@ class Dialogue extends Model implements ChatDelegateContract
 
         $chat->addReply($reply);
 
-//        Log::debug('Dialogue::delegate() -> reply is on topic');
-//
-//        Event::dispatch('chat.message-sent', ['dialogue_id' => $this->id]);
+        Log::debug('Dialogue::delegate() -> reply is on topic');
 
-        // $outgoingMessage->dialogue_id = $this->id;
 
         return $outgoingMessage;
     }

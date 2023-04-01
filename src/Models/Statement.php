@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $id
+ * @property string $trainable_id
+ * @property string $statement
+ *
+ * @property Trainable $trainable
+ */
 class Statement extends Model
 {
     use HasUuids;

@@ -29,6 +29,4 @@ interface ChatDelegateContract
      * @return ChatMessageContract
      */
     public function delegate(ChatContract $chat): ChatMessageContract;
-
-    public function delegated(ChatContract $chat, ChatMessageContract $message): void;
 }
