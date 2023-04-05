@@ -2,6 +2,15 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.2.1] - 2023-04-04
+
+### Added
+- Added a new base model with new factory method to be extended by all models
+
+### Updated
+- Normalized use of UUID in migrations
+
+---
 ## [0.2.0] - 2023-04-04
 
 ### Added
