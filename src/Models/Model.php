@@ -4,7 +4,7 @@ namespace SavvyAI\Models;
 
 class Model extends \Illuminate\Database\Eloquent\Model
 {
-    public static function newFactory()
+    protected static function newFactory()
     {
         $name = explode('\\', get_called_class());
         $factory = sprintf('Database\\Factories\\%sFactory', array_pop($name));
