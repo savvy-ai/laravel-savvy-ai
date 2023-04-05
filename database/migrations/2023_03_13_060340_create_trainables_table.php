@@ -14,7 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('trainables', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')
+                ->primary()
+                ->autoIncrement();
 
             $table->foreignId('user_id')
                 ->constrained()

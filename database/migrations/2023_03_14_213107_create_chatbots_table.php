@@ -13,7 +13,9 @@ return new class extends Migration
     {
         // https://platform.openai.com/docs/api-reference/completions/create
         Schema::create('chatbots', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')
+                ->primary()
+                ->autoIncrement();
 
             $table->foreignUuid('trainable_id')->constrained();
 

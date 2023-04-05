@@ -14,7 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('statements', function (Blueprint $table) {
-            $table->uuid('id')->primary()->autoIncrement();
+            $table->uuid('id')
+                ->primary()
+                ->autoIncrement();
 
             $table->foreignUuid('trainable_id')
                 ->constrained()
