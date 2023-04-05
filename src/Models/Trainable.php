@@ -3,8 +3,6 @@
 namespace SavvyAI\Models;
 
 use DateTime;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property string $id
@@ -20,9 +18,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Trainable extends Model
 {
-    use HasUuids;
-    use HasFactory;
-
     protected $casts = [
         'is_training'  => 'boolean',
         'trained_at'   => 'datetime',

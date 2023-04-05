@@ -2,9 +2,6 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 /**
  * @property string $id
  * @property string $trainable_id
@@ -14,9 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Statement extends Model
 {
-    use HasUuids;
-    use HasFactory;
-
     protected $fillable = [
         'trainable_id',
         'statement',

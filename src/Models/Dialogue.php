@@ -2,8 +2,6 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
@@ -21,8 +19,6 @@ use SavvyAI\Traits\InteractsWithAIService;
  */
 class Dialogue extends Model implements ChatDelegateContract
 {
-    use HasUuids;
-    use HasFactory;
     use Delegatable;
     use InteractsWithAIService;
     use ExpandsPromptSnippets;

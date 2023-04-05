@@ -3,17 +3,12 @@
 namespace SavvyAI\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property Chat $chat
  */
 class Message extends Model
 {
-    use HasUuids;
-    use HasFactory;
-
     protected $casts = [
         'is_read' => 'boolean',
         'media'   => 'array',

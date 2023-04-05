@@ -2,13 +2,11 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use SavvyAI\Traits\Chatable;
 
 /**
@@ -19,8 +17,6 @@ use SavvyAI\Traits\Chatable;
  */
 class Chat extends Model implements ChatContract
 {
-    use HasUuids;
-    use HasFactory;
     use Chatable;
 
     protected $fillable = [

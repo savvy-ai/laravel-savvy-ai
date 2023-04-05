@@ -2,6 +2,12 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.2.3] - 2023-04-04
+
+### Updated
+- Update all models to extend base model and to use the HasFactory and HasUuids trait
+
+---
 ## [0.2.2] - 2023-04-04
 
 ### Fixed

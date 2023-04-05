@@ -2,8 +2,14 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Model extends \Illuminate\Database\Eloquent\Model
 {
+    use HasUuids;
+    use HasFactory;
+
     protected static function newFactory()
     {
         $name = explode('\\', get_called_class());
@@ -11,7 +17,7 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
         if (class_exists($factory))
         {
-            return call_user_func([$factory, 'new']);
+            return $factory::new();
         }
 
         return null;

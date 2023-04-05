@@ -2,8 +2,6 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Traits\Delegatable;
@@ -24,8 +22,6 @@ use SavvyAI\Traits\Delegatable;
  */
 class Chatbot extends Model implements ChatDelegateContract
 {
-    use HasUuids;
-    use HasFactory;
     use Delegatable;
 
     protected $fillable = [
