@@ -8,11 +8,7 @@ use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
-use SavvyAI\Models\Agent;
-use SavvyAI\Models\Dialogue;
-use SavvyAI\Models\Trainable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use SavvyAI\Traits\Chatable;
 
 /**
