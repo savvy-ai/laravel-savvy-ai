@@ -2,6 +2,12 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.2.2] - 2023-04-04
+
+### Fixed
+- Fixed issue where seeding would fail due to public visibility of model newFactory()
+
+---
 ## [0.2.1] - 2023-04-04
 
 ### Added
