@@ -2,19 +2,23 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use DateTime;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
+ * @property string $id
+ * @property string $user_id
+ * @property string $name
+ * @property string $handle
+ * @property bool $is_training
+ * @property DateTime $trained_at
+ * @property DateTime $published_at
+ *
  * @property Chat[] $chats
  * @property Chatbot $chatbot
  */
-class Trainable extends Model
+class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
 {
-    use HasUuids;
-    use HasFactory;
-
     protected $casts = [
         'is_training'  => 'boolean',
         'trained_at'   => 'datetime',
@@ -33,6 +37,11 @@ class Trainable extends Model
     protected $appends = [
         'has_been_trained',
     ];
+
+    public function getStatementRepository(): Builder
+    {
+        return $this->statements();
+    }
 
     public function chatbot(): \Illuminate\Database\Eloquent\Relations\HasOne
     {

@@ -2,10 +2,6 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
@@ -23,8 +19,6 @@ use SavvyAI\Traits\InteractsWithAIService;
  */
 class Dialogue extends Model implements ChatDelegateContract
 {
-    use HasUuids;
-    use HasFactory;
     use Delegatable;
     use InteractsWithAIService;
     use ExpandsPromptSnippets;
@@ -42,6 +36,11 @@ class Dialogue extends Model implements ChatDelegateContract
         'frequency_penalty',
         'stop'
     ];
+
+    public function getDelegateId(): int|string
+    {
+        return $this->id;
+    }
 
     public function getDelegateDescription(): string
     {
@@ -63,6 +62,10 @@ class Dialogue extends Model implements ChatDelegateContract
         return $this->belongsTo(Agent::class);
     }
 
+    /**
+     * @throws UnknownContextException
+     * @throws OffTopicException
+     */
     public function delegate(ChatContract $chat): ChatMessageContract
     {
         $incomingMessage = $chat->getLastMessage();
@@ -75,30 +78,34 @@ class Dialogue extends Model implements ChatDelegateContract
 
         Log::debug('Dialogue::delegate() -> generating reply');
 
+        $this->maxTokens = 32;
+        $this->stop = null;
+
         $reply = $this->chat([
             new ChatMessage(Role::System, $prompt),
-            ...$chat->getMessages(),
+            ...$chat->getChatHistory(),
+            $incomingMessage,
         ]);
 
         $chat->addReply($reply);
 
         $outgoingMessage = ChatMessage::fromChatReply($reply);
 
-//        $this->maxTokens   = 16;
-//        $this->temperature = 0.0;
-//
-//        Log::debug('Dialogue::delegate() -> validating reply to ensure it is on topic');
-//
-//        $this->validateWithMessages([
-//            $incomingMessage->toArray(),
-//            $outgoingMessage->toArray(),
-//        ], $this->topic);
-//
-//        Log::debug('Dialogue::delegate() -> reply is on topic');
-//
-//        Event::dispatch('chat.message-sent', ['dialogue_id' => $this->id]);
+        $this->maxTokens   = 16;
+        $this->temperature = 0.0;
+        $this->stop        = ' ';
 
-        // $outgoingMessage->dialogue_id = $this->id;
+        Log::debug('Dialogue::delegate() -> validating reply to ensure it is on topic');
+
+        $reply = $this->validateWithMessages([
+            $incomingMessage->asArray(),
+            $outgoingMessage->asArray(),
+        ], $this->topic);
+
+        $chat->addReply($reply);
+
+        Log::debug('Dialogue::delegate() -> reply is on topic');
+
 
         return $outgoingMessage;
     }

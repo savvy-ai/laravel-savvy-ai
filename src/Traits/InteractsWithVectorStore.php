@@ -2,7 +2,7 @@
 
 namespace SavvyAI\Traits;
 
-use Illuminate\Support\Facades\File;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 trait InteractsWithVectorStore
 {
@@ -13,45 +13,43 @@ trait InteractsWithVectorStore
      *
      * @return array<int, string>
      */
-    public function search(array $vector, string $namespace, array $filter = []): array
+    public function search(array $vector, string $namespace, array $filter = [], Builder $statements = null): array
     {
-        $dir = storage_path('statements/' . $namespace);
-
         $matches = vector()->post('/query', [
-            'vector'    => $vector,
+            'vector' => $vector,
             'namespace' => $namespace,
-            'topK'      => 10,
+            'topK' => 10,
         ])->json('matches');
 
-        $sentences = [];
-
-        foreach ($matches as $match)
+        if ($statements)
         {
-            $sentences[] = file_get_contents($dir.'/'.$match['id'].'.txt');
+            return $statements->whereIn('id', collect($matches)->pluck('id')->toArray())
+                ->get()
+                ->toArray();
         }
 
-        return $sentences;
+        return $matches;
     }
 
-    public function store(array $vectors, string $namespace, array $metadata = []): bool
+    public function store(array $vectors, string $namespace, array $metadata = [], Builder $statements = null): bool
     {
-        $dir = storage_path('statements/' . $namespace);
-
-        if (!is_readable($dir))
-        {
-            File::makeDirectory($dir, 0777, true, true);
-        }
-
         $stored = vector()->post('/vectors/upsert', [
             'namespace' => $namespace,
-            'vectors'   => collect($vectors)->map(function ($vector) use ($dir, $metadata) {
+            'vectors' => collect($vectors)->map(function ($vector) use ($statements, $metadata) {
                 $key = sha1($vector['sentence']);
 
-                file_put_contents(sprintf('%s/%s.txt', $dir, $key), $vector['sentence']);
+                if ($statements)
+                {
+                    $model = $statements->create([
+                        'statement' => $vector['sentence'],
+                    ]);
+
+                    $key = $model->id;
+                }
 
                 return [
-                    'id'       => $key,
-                    'values'   => $vector['values'],
+                    'id' => $key,
+                    'values' => $vector['values'],
                     'metadata' => array_merge($metadata, compact('key')),
                 ];
             })->toArray(),
@@ -62,13 +60,6 @@ trait InteractsWithVectorStore
 
     public function destroy(string $namespace, array $filters = []): bool
     {
-        $dir = storage_path('statements/' . $namespace);
-
-        if (is_readable($dir))
-        {
-            File::deleteDirectory($dir);
-        }
-
         $params = [
             'namespace' => $namespace,
             'deleteAll' => true,

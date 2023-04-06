@@ -3,6 +3,7 @@
 namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Log;
+use SavvyAI\Contracts\TrainableContract;
 use Vanderlee\Sentence\Sentence;
 
 /**
@@ -10,15 +11,16 @@ use Vanderlee\Sentence\Sentence;
  *
  * @author Selvin Ortiz <selvin@savvyai.com>
  * @author Brennen Phippen <brennen@savvyai.com>
+ *
  * @package SavvyAI\Traits
  */
 trait TrainsWithAIService
 {
-    public function train(string $text, string $namespace, array $metadata = []): bool
+    public function train(TrainableContract $trainable, string $text, string $namespace, array $metadata = []): bool
     {
         $sentences = $this->summarizeForTraining($text, 128, 512);
         $vectors   = $this->vectorizeForStorage($sentences);
-        $stored    = $this->store($vectors, $namespace, $metadata);
+        $stored    = $this->store($vectors, $namespace, $metadata, $trainable->getStatementRepository());
 
         Log::info('SavvyAI: Training completed', [
             'namespace' => $namespace,

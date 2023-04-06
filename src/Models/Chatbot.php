@@ -2,21 +2,26 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Traits\Delegatable;
 
 /**
+ * @property string $id
+ * @property string $trainable_id
+ * @property string $prompt
+ * @property string $model
+ * @property int $max_tokens
+ * @property float $temperature
+ * @property float $presence_penalty
+ * @property float $frequency_penalty
+ * @property string $stop
+ *
  * @property Trainable $trainable
  * @property Agent[]|Collection $agents
  */
 class Chatbot extends Model implements ChatDelegateContract
 {
-    use HasUuids;
-    use HasFactory;
     use Delegatable;
 
     protected $fillable = [
@@ -31,6 +36,11 @@ class Chatbot extends Model implements ChatDelegateContract
     ];
 
     protected $appends = ['name'];
+
+    public function getDelegateId(): int|string
+    {
+        return $this->id;
+    }
 
     /**
      * @param string $name
@@ -49,7 +59,7 @@ class Chatbot extends Model implements ChatDelegateContract
 
     public function getNameAttribute(): string
     {
-        return $this->trainable->name . ' Chatbot';
+        return 'Some Chatbot';
     }
 
     public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo

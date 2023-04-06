@@ -5,9 +5,11 @@ namespace SavvyAI\Traits;
 use Illuminate\Support\Facades\Blade;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
+use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\ChatReply;
 use SavvyAI\Features\Chatting\Role;
+use SavvyAI\Savvy;
 
 /**
  * Makes calls to the OpenAI API to classify text, validate replies, and to chat
@@ -90,7 +92,7 @@ EOT;
      *
      * @return ChatReplyContract
      *
-     * @throws UnknownContextException
+     * @throws UnknownContextException|OffTopicException
      */
     public function validate(string $text, string $topic): ChatReplyContract
     {
@@ -106,7 +108,7 @@ EOT;
      *
      * @return ChatReplyContract
      *
-     * @throws UnknownContextException
+     * @throws UnknownContextException|OffTopicException
      */
     public function validateWithMessages(array $messages, string $topic): ChatReplyContract
     {
@@ -134,7 +136,7 @@ EOT;
 
         if (!$reply->isOnTopic())
         {
-            throw new UnknownContextException($reply->content());
+            throw new OffTopicException($reply->content());
         }
 
         return $reply;

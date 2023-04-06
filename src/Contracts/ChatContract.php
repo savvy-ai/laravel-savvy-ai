@@ -4,6 +4,14 @@ namespace SavvyAI\Contracts;
 
 interface ChatContract
 {
+
+    public function getChatId(): int|string;
+
+    /**
+     * @return ChatMessageContract[]
+     */
+    public function getChatHistory(): array;
+
     /**
      * @return ChatMessageContract[]
      */
@@ -42,8 +50,7 @@ interface ChatContract
 
     public function getLastReply(): ?ChatReplyContract;
 
-    /**
-     * @return bool
-     */
-    public function persist(): bool;
+    public function persist(ChatDelegateContract $delegate): bool;
+
+    public function reply(ChatDelegateContract $delegate, ChatMessageContract $message): ?ChatMessageContract;
 }

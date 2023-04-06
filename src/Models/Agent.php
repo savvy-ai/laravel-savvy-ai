@@ -2,23 +2,29 @@
 
 namespace SavvyAI\Models;
 
-use Exception;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Traits\Delegatable;
 use SavvyAI\Traits\InteractsWithAIService;
 
 /**
+ * @property string $id
+ * @property string $chatbot_id
+ * @property string $name
+ * @property string $prompt
+ * @property string $classification
+ * @property string $model
+ * @property int $max_tokens
+ * @property float $temperature
+ * @property float $presence_penalty
+ * @property float $frequency_penalty
+ * @property string $stop
+ *
  * @property Chatbot $bot
  * @property Dialogue[]|Collection $dialogues
  */
 class Agent extends Model implements ChatDelegateContract
 {
-    use HasUuids;
-    use HasFactory;
     use Delegatable;
     use InteractsWithAIService;
 
@@ -34,6 +40,11 @@ class Agent extends Model implements ChatDelegateContract
         'frequency_penalty',
         'stop'
     ];
+
+    public function getDelegateId(): int|string
+    {
+        return $this->id;
+    }
 
     public function getDelegateByName(string $name): ChatDelegateContract
     {

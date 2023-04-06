@@ -2,16 +2,11 @@
 
 namespace SavvyAI\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatContract;
+use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
-use SavvyAI\Models\Agent;
-use SavvyAI\Models\Dialogue;
-use SavvyAI\Models\Trainable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use SavvyAI\Traits\Chatable;
 
 /**
@@ -22,8 +17,6 @@ use SavvyAI\Traits\Chatable;
  */
 class Chat extends Model implements ChatContract
 {
-    use HasUuids;
-    use HasFactory;
     use Chatable;
 
     protected $fillable = [
@@ -33,9 +26,14 @@ class Chat extends Model implements ChatContract
         'dialogue_id',
     ];
 
-    public function getMessages(): array
+    public function getChatId(): int|string
     {
-        $history = $this->messages
+        return $this->id;
+    }
+
+    public function getChatHistory(): array
+    {
+        return $this->messages
             ->map(function (Message $message) {
                 return new ChatMessage(
                     Role::from($message->role),
@@ -43,10 +41,23 @@ class Chat extends Model implements ChatContract
                 );
             })
             ->toArray();
+    }
 
-        $history[] = $this->getLastMessage();
+    public function persist(ChatDelegateContract $delegate): bool
+    {
+        // Save messages to history
+        foreach ($this->getMessages() as $message)
+        {
+            $this->messages()->create($message->asArray());
+        }
 
-        return $history;
+        // Save delegates to chat context
+        $this->agent_id = $delegate->getSelectedDelegate()->id ?? null;
+        $this->dialogue_id = $delegate->getSelectedDelegate()->getSelectedDelegate()->id ?? null;
+
+        $this->save();
+
+        return true;
     }
 
     public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany
