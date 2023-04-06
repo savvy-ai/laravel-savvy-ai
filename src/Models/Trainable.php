@@ -3,6 +3,7 @@
 namespace SavvyAI\Models;
 
 use DateTime;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
  * @property string $id
@@ -16,7 +17,7 @@ use DateTime;
  * @property Chat[] $chats
  * @property Chatbot $chatbot
  */
-class Trainable extends Model
+class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
 {
     protected $casts = [
         'is_training'  => 'boolean',
@@ -36,6 +37,11 @@ class Trainable extends Model
     protected $appends = [
         'has_been_trained',
     ];
+
+    public function getStatementRepository(): Builder
+    {
+        return $this->statements();
+    }
 
     public function chatbot(): \Illuminate\Database\Eloquent\Relations\HasOne
     {

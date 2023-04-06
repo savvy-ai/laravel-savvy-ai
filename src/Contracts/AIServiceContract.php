@@ -12,6 +12,8 @@ namespace SavvyAI\Contracts;
  */
 interface AIServiceContract
 {
+    public function train(TrainableContract $trainable, string $text, string $namespace, array $metadata = []): bool;
+
     public function chat(array $messages = []): ChatReplyContract;
 
     public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ChatReplyContract;

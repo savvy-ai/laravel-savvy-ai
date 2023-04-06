@@ -2,6 +2,16 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.3.0] - 2023-04-05
+
+### Added
+- Added a trainable contract to enforce the fetching of a knowledge/statement repository
+- Added a trainable parameter to main train() method
+
+### Updated
+- Updated the way the vector store service handle persistance
+
+---
 ## [0.2.3] - 2023-04-04
 
 ### Updated
