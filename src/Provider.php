@@ -15,10 +15,10 @@ class Provider extends \Illuminate\Support\ServiceProvider
         $this->app->singleton(SavvyAI::class, static fn () => new SavvyAI());
 
         $this->app->singleton(Client::class, static function () {
-            $driver = config('savvy-ai.drivers.ai');
+            $driver = Config::get('savvy-ai.drivers.ai');
 
-            $key = config(sprintf('savvy-ai.%s.key', $driver));
-            $org = config(sprintf('savvy-ai.%s.org', $driver));
+            $key = Config::get(sprintf('savvy-ai.%s.key', $driver));
+            $org = Config::get(sprintf('savvy-ai.%s.org', $driver));
 
             if (! is_string($key) || ($org !== null && ! is_string($org)))
             {
@@ -66,6 +66,7 @@ class Provider extends \Illuminate\Support\ServiceProvider
                 \SavvyAI\Commands\Test\Chatting\SavvyValidate::class,
                 \SavvyAI\Commands\Test\Chatting\SavvyChat::class,
                 \SavvyAI\Commands\Test\Chatting\SavvySearch::class,
+                \SavvyAI\Commands\Test\Chatting\SavvyExpand::class,
                 \SavvyAI\Commands\Test\Training\SavvyIndex::class,
                 \SavvyAI\Commands\Test\Training\SavvyDestroy::class,
             ]);

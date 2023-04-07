@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'snippets' => [
+        'namespace' => '\\App\\Snippets',
+    ],
+
     'drivers' => [
         'ai'     => env('AI_DRIVER', 'openai'),
         'sms'    => env('SMS_DRIVER', 'twilio'),

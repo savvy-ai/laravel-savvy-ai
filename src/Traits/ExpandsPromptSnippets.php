@@ -2,13 +2,23 @@
 
 namespace SavvyAI\Traits;
 
+use Exception;
+use Illuminate\Support\Facades\Config;
+use SavvyAI\Snippets\Snippet;
+
 trait ExpandsPromptSnippets
 {
-    const NAMESPACE       = '\\SavvyAI\\Snippets\\';
     const CAST_REGEX      = '/([a-zA-Z0-9_-]+):\s?(\w+)/';
     const SNIPPET_REGEX   = '/<(\S+)(\s+[^>]+)?\s*\/?>/';
     const ATTRIBUTE_REGEX = '/([^\s=]+)="([^"]+)"/';
 
+    /**
+     * @param string $prompt
+     * @param string $input
+     *
+     * @return string
+     * @throws Exception
+     */
     public function expand(string $prompt, string $input = ''): string
     {
         preg_match_all(self::SNIPPET_REGEX, $prompt, $matches, PREG_SET_ORDER);
@@ -25,8 +35,7 @@ trait ExpandsPromptSnippets
                 $attributes[$attributeMatch[1]] = $this->cast($attributeMatch[2]);
             }
 
-            $name    = self::NAMESPACE . $snippet;
-            $snippet = new $name($attributes);
+            $snippet = $this->resolveSnippet($snippet, $attributes);
 
             $prompt = str_replace($match[0], $snippet->use($input), $prompt);
         }
@@ -70,5 +79,24 @@ trait ExpandsPromptSnippets
         }
 
         return $value;
+    }
+
+    /**
+     * @param string $snippet
+     * @param array $attributes
+     *
+     * @return Snippet
+     * @throws Exception
+     */
+    public function resolveSnippet(string $snippet, array $attributes = []): Snippet
+    {
+        $class = sprintf('%s\\%s', Config::get('savvy-ai.snippets.namespace', '\\SavvyAI\\Snippets'), ucfirst($snippet));
+
+        if (!class_exists($class))
+        {
+            throw new Exception(sprintf('Snippet %s does not exist', $class));
+        }
+
+        return new $class($attributes);
     }
 }

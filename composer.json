@@ -43,10 +43,7 @@
         "openai-php/client": "^0.4.0",
         "symfony/http-client": "^6.2",
         "nyholm/psr7": "^1.5",
-        "twilio/sdk": "^7.0",
-        "pusher/pusher-php-server": "^7.2",
-        "vanderlee/php-sentence": "^1.0",
-        "filament/filament": "^2.17"
+        "vanderlee/php-sentence": "^1.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

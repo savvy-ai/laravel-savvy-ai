@@ -2,7 +2,7 @@
 
 namespace SavvyAI\Snippets;
 
-class Snippet
+abstract class Snippet
 {
     public function __construct(array $attributes = [])
     {
@@ -11,4 +11,6 @@ class Snippet
             $this->{$key} = $value;
         }
     }
+
+    abstract public function use(string $input): string;
 }

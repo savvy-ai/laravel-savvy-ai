@@ -45,15 +45,22 @@ class Chat extends Model implements ChatContract
 
     public function persist(ChatDelegateContract $delegate): bool
     {
+        $agentId = $delegate->getSelectedDelegate()->id ?? null;
+        $dialogueId = $delegate->getSelectedDelegate()->getSelectedDelegate()->id ?? null;
+
         // Save messages to history
         foreach ($this->getMessages() as $message)
         {
-            $this->messages()->create($message->asArray());
+            $message = $message->asArray();
+
+            $message['dialogue_id'] = $dialogueId;
+
+            $this->messages()->create($message);
         }
 
         // Save delegates to chat context
-        $this->agent_id = $delegate->getSelectedDelegate()->id ?? null;
-        $this->dialogue_id = $delegate->getSelectedDelegate()->getSelectedDelegate()->id ?? null;
+        $this->agent_id = $agentId;
+        $this->dialogue_id = $dialogueId;
 
         $this->save();
 
