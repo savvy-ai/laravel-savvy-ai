@@ -2,6 +2,21 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.4.0] - 2023-04-08
+
+### Added
+- Added support for Dialogue Prompt Snippets by setting `snippets.namespace` config
+- Added the expand command to test snippet expansion via the console
+
+### Updated
+- Updated the way the snippets are resolved to allow for more flexibility
+
+### Removed
+- Removed dependency on `Filament`
+- Removed dependency on `Twilio`
+- Removed dependency on `Pusher`
+
+---
 ## [0.3.0] - 2023-04-05
 
 ### Added
@@ -9,7 +24,7 @@ Domain knowledge artificial intelligence framework for Laravel
 - Added a trainable parameter to main train() method
 
 ### Updated
-- Updated the way the vector store service handle persistance
+- Updated the way the vector store service handle persistence
 
 ---
 ## [0.2.3] - 2023-04-04
