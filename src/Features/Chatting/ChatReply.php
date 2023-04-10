@@ -24,12 +24,16 @@ class ChatReply implements ChatReplyContract
      */
     public static function fromAIServiceResponse(array $response): ChatReplyContract
     {
-        $instance = new static();
+        return new static(
+            $response['usage']->toArray() ?? [],
+            $response['choices'][0]->message->toArray() ?? []
+        );
+    }
 
-        $instance->usage   = $response['usage']->toArray() ?? [];
-        $instance->message = $response['choices'][0]->message->toArray() ?? [];
-
-        return $instance;
+    public function __construct(array $usage, array $message)
+    {
+        $this->usage = $usage;
+        $this->message = $message;
     }
 
     public function role(): string
