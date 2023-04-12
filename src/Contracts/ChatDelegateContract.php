@@ -12,6 +12,8 @@ interface ChatDelegateContract
 
     public function getSelectedDelegate(): ChatDelegateContract;
 
+    public function resetSelectedDelegate(): ChatDelegateContract;
+
     public function setSelectedDelegate(ChatDelegateContract $delegate): ChatDelegateContract;
 
     public function getDelegateByName(string $name): ChatDelegateContract;

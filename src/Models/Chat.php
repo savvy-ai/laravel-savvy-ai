@@ -43,6 +43,11 @@ class Chat extends Model implements ChatContract
             ->toArray();
     }
 
+    /**
+     * @param ChatDelegateContract $delegate
+     *
+     * @return bool
+     */
     public function persist(ChatDelegateContract $delegate): bool
     {
         $agentId = $delegate->getSelectedDelegate()->id ?? null;
@@ -62,9 +67,7 @@ class Chat extends Model implements ChatContract
         $this->agent_id = $agentId;
         $this->dialogue_id = $dialogueId;
 
-        $this->save();
-
-        return true;
+        return $this->save();
     }
 
     public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany

@@ -7,6 +7,8 @@ use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
+use SavvyAI\Exceptions\OffTopicException;
+use SavvyAI\Exceptions\UnknownContextException;
 use Throwable;
 
 trait Chatable
@@ -26,27 +28,57 @@ trait Chatable
      */
     private array $chatContext = [];
 
+    /**
+     * @param ChatDelegateContract $delegate
+     * @param ChatMessageContract $message
+     *
+     * @return ChatMessageContract|null
+     * @throws Throwable
+     */
     public function reply(ChatDelegateContract $delegate, ChatMessageContract $message): ?ChatMessageContract
+    {
+        try
+        {
+            return $this->replyWithoutCatching($delegate, $message);
+        } catch (UnknownContextException|OffTopicException $e)
+        {
+            $this->clearMessages();
+
+            if ($delegate->hasSelectedDelegate())
+            {
+                $delegate->getSelectedDelegate()->resetSelectedDelegate();
+                $delegate->resetSelectedDelegate();
+            }
+
+            return $this->replyWithoutCatching($delegate, $message);
+        } catch (Throwable $throwable)
+        {
+            throw $throwable;
+        }
+    }
+
+    /**
+     * @param ChatDelegateContract $delegate
+     * @param ChatMessageContract $message
+     *
+     * @return ChatMessageContract|null
+     * @throws Throwable
+     */
+    public function replyWithoutCatching(ChatDelegateContract $delegate, ChatMessageContract $message): ?ChatMessageContract
     {
         $this->chatMessages = [];
         $this->chatReplies = [];
         $this->chatContext = [];
 
-        try
-        {
-            $this->addMessage($message);
+        $this->addMessage($message);
 
-            $message = $delegate->delegate($this);
+        $message = $delegate->delegate($this);
 
-            $this->addMessage($message);
+        $this->addMessage($message);
 
-            $this->persist($delegate);
+        $this->persist($delegate);
 
-            return $message;
-        } catch (Throwable $throwable)
-        {
-            throw $throwable;
-        }
+        return $message;
     }
 
     public function getChatId(): int|string
@@ -95,6 +127,13 @@ trait Chatable
     public function addMessages(array $messages): ChatContract
     {
         $this->chatMessages[] = array_merge($this->chatMessages, $messages);
+
+        return $this;
+    }
+
+    public function clearMessages(): ChatContract
+    {
+        $this->chatMessages = [];
 
         return $this;
     }

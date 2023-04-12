@@ -8,7 +8,6 @@ use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Exceptions\UnknownContextException;
-use Throwable;
 
 trait Delegatable
 {
@@ -50,6 +49,16 @@ trait Delegatable
     public function setSelectedDelegate(ChatDelegateContract $delegate): ChatDelegateContract
     {
         $this->selectedDelegate = $delegate;
+
+        return $this;
+    }
+
+    /**
+     * @return ChatDelegateContract
+     */
+    public function resetSelectedDelegate(): ChatDelegateContract
+    {
+        $this->selectedDelegate = null;
 
         return $this;
     }

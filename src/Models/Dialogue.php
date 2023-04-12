@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Models;
 
+use Exception;
 use Illuminate\Support\Facades\Log;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
@@ -65,6 +66,7 @@ class Dialogue extends Model implements ChatDelegateContract
     /**
      * @throws UnknownContextException
      * @throws OffTopicException
+     * @throws Exception
      */
     public function delegate(ChatContract $chat): ChatMessageContract
     {

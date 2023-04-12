@@ -37,6 +37,11 @@ interface ChatContract
     public function addMessages(array $messages): ChatContract;
 
     /**
+     * @return ChatContract
+     */
+    public function clearMessages(): ChatContract;
+
+    /**
      * @return ChatReplyContract[]
      */
     public function getReplies(): array;
