@@ -30,15 +30,3 @@ EOT;
 
     expect($sentencesArray)->toBe($output);
 });
-
-//it('vectorizes sentences', function () {
-//    $sentence = [
-//        "About this space Stirling's Stirling's, \"family style home\" is a separate living area in lower & upper area of home. Private entrance and parking.",
-//    ];
-//
-//    $dummy = new DummyForTraining();
-//
-//    $vectors = $dummy->vectorizeForStorage($sentence);
-//
-//    expect($vectors)->toHaveProperties(['id', 'values', 'sentence']);
-//});

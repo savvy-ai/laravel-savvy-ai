@@ -17,7 +17,6 @@ trait ExpandsPromptSnippets
      * @param string $input
      *
      * @return string
-     * @throws Exception
      */
     public function expand(string $prompt, string $input = ''): string
     {
@@ -35,9 +34,15 @@ trait ExpandsPromptSnippets
                 $attributes[$attributeMatch[1]] = $this->cast($attributeMatch[2]);
             }
 
-            $snippet = $this->resolveSnippet($snippet, $attributes);
-
-            $prompt = str_replace($match[0], $snippet->use($input), $prompt);
+            try
+            {
+                $snippet = $this->resolveSnippet($snippet, $attributes);
+                $prompt  = str_replace($match[0], $snippet->use($input), $prompt);
+            }
+            catch (Exception $e)
+            {
+                //
+            }
         }
 
         return $prompt;
