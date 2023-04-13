@@ -24,7 +24,7 @@ trait ExpandsPromptSnippets
 
         foreach ($matches as $match)
         {
-            $snippet    = $match[1];
+            $snippet    = rtrim($match[1], '/'); // Remove trailing slash
             $attributes = [];
 
             preg_match_all(self::ATTRIBUTE_REGEX, $match[0], $attributeMatches, PREG_SET_ORDER);
