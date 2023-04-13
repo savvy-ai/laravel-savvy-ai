@@ -77,7 +77,7 @@ trait Delegatable
 
         if (!$this->hasSelectedDelegate())
         {
-            Log::debug('Bot::delegate() -> finding a suitable agent');
+            Log::debug('Bot::delegate() -> finding a suitable delegate');
 
             $delegates = collect($this->delegates())->map(function (ChatDelegateContract $delegate) {
                 return $delegate->getDelegateDescription();
@@ -91,13 +91,13 @@ trait Delegatable
             $chat->addReply($reply);
         }
 
-        Log::debug('Bot::delegate() -> delegating to agent: ' . get_class($this->getSelectedDelegate()));
+        Log::debug('Bot::delegate() -> delegating to delegate: ' . get_class($this->getSelectedDelegate()));
 
         $outgoingMessage = $this
             ->getSelectedDelegate()
             ->delegate($chat);
 
-        Log::debug('Bot::delegate() -> message from agent: ' . $outgoingMessage->content());
+        Log::debug('Bot::delegate() -> message from delegate: ' . $outgoingMessage->content());
 
         return $outgoingMessage;
     }
