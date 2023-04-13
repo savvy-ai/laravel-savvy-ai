@@ -2,13 +2,17 @@
 
 namespace SavvyAI\Traits;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use OpenAI\Exceptions\ErrorException;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Features\Chatting\ChatMessage;
+use SavvyAI\Features\Chatting\Role;
 use Throwable;
 
 trait Chatable
@@ -40,7 +44,8 @@ trait Chatable
         try
         {
             return $this->replyWithoutCatching($delegate, $message);
-        } catch (UnknownContextException|OffTopicException $e)
+        }
+        catch (UnknownContextException|OffTopicException $e)
         {
             $this->clearMessages();
 
@@ -51,9 +56,24 @@ trait Chatable
             }
 
             return $this->replyWithoutCatching($delegate, $message);
-        } catch (Throwable $throwable)
+        }
+        catch (ErrorException $e)
         {
-            throw $throwable;
+            Log::error($e->getMessage());
+
+            return new ChatMessage(
+                Role::Assistant,
+                'Sorry, we are having issues contacting our AI service. Please try again later.',
+            );
+        }
+        catch (Throwable $throwable)
+        {
+            Log::error($throwable->getMessage());
+
+            return new ChatMessage(
+                Role::Assistant,
+                'Oops, something went wrong on our end. Please try again later.',
+            );
         }
     }
 
