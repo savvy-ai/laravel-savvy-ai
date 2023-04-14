@@ -1,6 +1,6 @@
 {
     "name": "savvy-ai/laravel-savvy-ai",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "description": "Domain knowledge artificial intelligence framework for Laravel",
     "keywords": [
         "laravel",

@@ -2,6 +2,17 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.5.0] - 2023-04-14
+
+### Added
+- Added support for relating dialogue and messages
+- Added fallback replies for unknown context and off-topic replies
+- Added initial tests for replies and messages
+
+### Fixed
+- Fixed issues with regular expressions to parse Prompt Snippets
+
+---
 ## [0.4.0] - 2023-04-08
 
 ### Added
