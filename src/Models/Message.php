@@ -27,18 +27,8 @@ class Message extends Model
         return $this->belongsTo(Chat::class);
     }
 
-    public function scopeThread(Builder $query, ?Dialogue $dialogue = null)
+    public function dialogue(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        if ($dialogue)
-        {
-            // Messages from a specific dialogue
-            $query->where('dialogue_id', $dialogue->id);
-        }
-
-        // Messages from the last 24 hours
-        $query->where('created_at', '>=', now()->subDay());
-
-        // Messages organized by the created date
-        $query->orderBy('created_at', 'asc');
+        return $this->belongsTo(Dialogue::class);
     }
 }
