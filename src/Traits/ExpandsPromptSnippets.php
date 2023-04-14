@@ -4,13 +4,23 @@ namespace SavvyAI\Traits;
 
 use Exception;
 use Illuminate\Support\Facades\Config;
+use SavvyAI\Contracts\SnippetResolverContract;
 use SavvyAI\Snippets\Snippet;
 
 trait ExpandsPromptSnippets
 {
-    const CAST_REGEX      = '/([a-zA-Z0-9_-]+):\s?(\w+)/';
-    const SNIPPET_REGEX   = '/<(\S+)(\s+[^>]+)?\s*\/?>/';
+    const CAST_REGEX = '/([a-zA-Z0-9_-]+):\s?(\w+)/';
+    const SNIPPET_REGEX = '/<(\S+)(\s+[^>]+)?\s*\/?>/';
     const ATTRIBUTE_REGEX = '/([^\s=]+)="([^"]+)"/';
+
+    protected ?SnippetResolverContract $resolver;
+
+    public function setResolver(SnippetResolverContract $resolver): self
+    {
+        $this->resolver = $resolver;
+
+        return $this;
+    }
 
     /**
      * @param string $prompt
@@ -24,7 +34,7 @@ trait ExpandsPromptSnippets
 
         foreach ($matches as $match)
         {
-            $snippet    = rtrim($match[1], '/'); // Remove trailing slash
+            $snippet = rtrim($match[1], '/'); // Remove trailing slash
             $attributes = [];
 
             preg_match_all(self::ATTRIBUTE_REGEX, $match[0], $attributeMatches, PREG_SET_ORDER);
@@ -36,8 +46,11 @@ trait ExpandsPromptSnippets
 
             try
             {
-                $snippet = $this->resolveSnippet($snippet, $attributes);
-                $prompt  = str_replace($match[0], $snippet->use($input), $prompt);
+                $snippet = $this->resolver
+                    ? $this->resolver->resolve($snippet, $attributes)
+                    : $this->resolveSnippet($snippet, $attributes);
+
+                $prompt = str_replace($match[0], $snippet->use($input), $prompt);
             }
             catch (Exception $e)
             {
@@ -51,13 +64,13 @@ trait ExpandsPromptSnippets
     /**
      * Given a string value, attempt to cast it to the appropriate type
      *
+     * @param string $value
+     *
+     * @return mixed
      * @example
      * <ConnectionSpeed cost="29.99" zones="zone1: Arizona, zone2: California, zone3: Nevada" />
      * [cost => 29.99, zones => [zone1 => Arizona, zone2 => California, zone3 => Nevada]]
      *
-     * @param string $value
-     *
-     * @return mixed
      */
     public function cast(string $value): mixed
     {
