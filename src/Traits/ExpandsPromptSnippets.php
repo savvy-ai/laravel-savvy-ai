@@ -13,11 +13,11 @@ trait ExpandsPromptSnippets
     const SNIPPET_REGEX = '/<(\S+)(\s+[^>]+)?\s*\/?>/';
     const ATTRIBUTE_REGEX = '/([^\s=]+)="([^"]+)"/';
 
-    protected ?SnippetResolverContract $resolver;
+    protected ?SnippetResolverContract $snippetResolver;
 
     public function setResolver(SnippetResolverContract $resolver): self
     {
-        $this->resolver = $resolver;
+        $this->snippetResolver = $resolver;
 
         return $this;
     }
@@ -46,8 +46,8 @@ trait ExpandsPromptSnippets
 
             try
             {
-                $snippet = $this->resolver
-                    ? $this->resolver->resolve($snippet, $attributes)
+                $snippet = $this->snippetResolver
+                    ? $this->snippetResolver->resolve($snippet, $attributes)
                     : $this->resolveSnippet($snippet, $attributes);
 
                 $prompt = str_replace($match[0], $snippet->use($input), $prompt);
