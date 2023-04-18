@@ -13,7 +13,7 @@ trait ExpandsPromptSnippets
     const SNIPPET_REGEX = '/<(\S+)(\s+[^>]+)?\s*\/?>/';
     const ATTRIBUTE_REGEX = '/([^\s=]+)="([^"]+)"/';
 
-    protected ?SnippetResolverContract $snippetResolver;
+    protected ?SnippetResolverContract $snippetResolver = null;
 
     public function setResolver(SnippetResolverContract $resolver): self
     {
