@@ -85,7 +85,7 @@ class Dialogue extends Model implements ChatDelegateContract
 
         Log::debug('Dialogue::delegate() -> generating reply');
 
-        $this->maxTokens = 32;
+        $this->maxTokens = $this->max_tokens;
         $this->stop = null;
 
         $reply = $this->chat([
