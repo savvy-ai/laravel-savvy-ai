@@ -19,15 +19,6 @@ return new class extends Migration
 
             $table->foreignUuid('trainable_id')->constrained();
 
-            $table->text('prompt');
-
-            $table->string('model')->default('gpt-3.5-turbo');
-            $table->integer('max_tokens')->default(32);
-            $table->float('temperature')->default(0.0);
-            $table->float('presence_penalty')->default(0.0);
-            $table->float('frequency_penalty')->default(0.0);
-            $table->string('stop')->nullable()->default(null);
-
             $table->timestamps();
         });
     }

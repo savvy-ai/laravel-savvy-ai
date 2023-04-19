@@ -11,14 +11,7 @@ use SavvyAI\Traits\InteractsWithAIService;
  * @property string $id
  * @property string $chatbot_id
  * @property string $name
- * @property string $prompt
  * @property string $classification
- * @property string $model
- * @property int $max_tokens
- * @property float $temperature
- * @property float $presence_penalty
- * @property float $frequency_penalty
- * @property string $stop
  *
  * @property Chatbot $bot
  * @property Dialogue[]|Collection $dialogues
@@ -31,14 +24,7 @@ class Agent extends Model implements ChatDelegateContract
     protected $fillable = [
         'chatbot_id',
         'name',
-        'prompt',
-        'classification',
-        'model',
-        'max_tokens',
-        'temperature',
-        'presence_penalty',
-        'frequency_penalty',
-        'stop'
+        'classification'
     ];
 
     public function getDelegateId(): int|string

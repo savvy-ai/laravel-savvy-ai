@@ -26,13 +26,6 @@ class Chatbot extends Model implements ChatDelegateContract
 
     protected $fillable = [
         'trainable_id',
-        'prompt',
-        'model',
-        'max_tokens',
-        'temperature',
-        'presence_penalty',
-        'frequency_penalty',
-        'stop'
     ];
 
     protected $appends = ['name'];
