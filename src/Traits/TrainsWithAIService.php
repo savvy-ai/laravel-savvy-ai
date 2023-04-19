@@ -4,6 +4,8 @@ namespace SavvyAI\Traits;
 
 use Illuminate\Support\Facades\Log;
 use SavvyAI\Contracts\TrainableContract;
+use SavvyAI\Features\Training\Splitter;
+use SavvyAI\Features\Training\Vectorizer;
 use Vanderlee\Sentence\Sentence;
 
 /**
@@ -16,6 +18,16 @@ use Vanderlee\Sentence\Sentence;
  */
 trait TrainsWithAIService
 {
+    public function getSplitter(): Splitter
+    {
+        return new Splitter();
+    }
+
+    public function getVectorizer(): Vectorizer
+    {
+        return new Vectorizer();
+    }
+
     public function train(TrainableContract $trainable, string $text, string $namespace, array $metadata = []): bool
     {
         $sentences = $this->summarizeForTraining($text, 128, 512);
@@ -33,66 +45,21 @@ trait TrainsWithAIService
 
     /**
      * @param string $text
-     * @param int $minLength
-     * @param int $maxLength
      *
      * @return array
      */
-    public function summarizeForTraining(string $text, int $minLength = 16, int $maxLength = 256): array
+    public function summarizeForTraining(string $text): array
     {
-        $sentences = (new Sentence())->split($text, Sentence::SPLIT_TRIM);
-
-        $mergedSentences = [];
-        $lastSentences   = [];
-
-        while(!empty($sentences))
-        {
-            $sentence = $currentSentence = array_shift($sentences);
-
-            if (!empty($lastSentences))
-            {
-                $sentence = implode(' ', $lastSentences) . ' ' . $sentence;
-            }
-
-            if (mb_strlen($sentence) < $minLength)
-            {
-                $lastSentences[] = $currentSentence;
-
-                continue;
-            }
-
-            if (mb_strlen($sentence) > $maxLength)
-            {
-                array_unshift($sentences, $currentSentence);
-
-                $sentence = implode(' ', $lastSentences);
-            }
-
-            $lastSentences     = [];
-            $mergedSentences[] = $sentence;
-        }
-
-        return $mergedSentences;
+        return $this->getSplitter()->split($text);
     }
 
-    public function vectorizeForStorage(array $sentences, int $maxTokens = 1000): array
+    /**
+     * @param array $sentences
+     *
+     * @return array
+     */
+    public function vectorizeForStorage(array $sentences): array
     {
-        $response = ai()->embeddings()->create([
-            'model' => 'text-embedding-ada-002',
-            'input' => $sentences,
-        ]);
-
-        $vectors = [];
-
-        foreach ($response->embeddings as $embedding)
-        {
-            $vectors[] = [
-                'id'       => $embedding->index,
-                'values'   => $embedding->embedding,
-                'sentence' => $sentences[$embedding->index],
-            ];
-        }
-
-        return $vectors;
+        return $this->getVectorizer()->vectorize($sentences);
     }
 }
