@@ -22,7 +22,7 @@ interface AIServiceContract
 
     public function vectorize(string $text): array;
 
-    public function summarizeForTraining(string $text, int $minLength = 16, int $maxLength = 256): array;
+    public function summarizeForTraining(string $text): array;
 
     public function vectorizeForStorage(array $sentences): array;
 }
