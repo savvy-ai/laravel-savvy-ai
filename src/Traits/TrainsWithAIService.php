@@ -30,7 +30,7 @@ trait TrainsWithAIService
 
     public function train(TrainableContract $trainable, string $text, string $namespace, array $metadata = []): bool
     {
-        $sentences = $this->summarizeForTraining($text, 128, 512);
+        $sentences = $this->summarizeForTraining($text);
         $vectors   = $this->vectorizeForStorage($sentences);
         $stored    = $this->store($vectors, $namespace, $metadata, $trainable->getStatementRepository());
 
