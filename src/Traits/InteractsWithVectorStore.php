@@ -10,7 +10,7 @@ trait InteractsWithVectorStore
      * @param array<int, float> $vector
      * @param string $namespace
      * @param array<string, string> $filter
-     *
+     * @param Builder|null $statements
      * @return array<int, string>
      */
     public function search(array $vector, string $namespace, array $filter = [], Builder $statements = null): array

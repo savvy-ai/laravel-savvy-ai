@@ -30,17 +30,14 @@ trait TrainsWithAIService
 
     public function train(TrainableContract $trainable, string $text, string $namespace, array $metadata = []): bool
     {
-        $sentences = $this->summarizeForTraining($text);
-        $vectors   = $this->vectorizeForStorage($sentences);
-        $stored    = $this->store($vectors, $namespace, $metadata, $trainable->getStatementRepository());
+        $statements = $this->summarizeForTraining($text);
 
-        Log::info('SavvyAI: Training completed', [
-            'namespace' => $namespace,
-            'metadata'  => $metadata,
-            'stored'    => $stored,
-        ]);
+        foreach ($statements as $statement)
+        {
+            $trainable->getStatementRepository()->create(compact('statement'));
+        }
 
-        return $stored;
+        return true;
     }
 
     /**
