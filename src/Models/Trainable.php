@@ -62,4 +62,18 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
     {
         return $this->statements()->exists();
     }
+
+    /**
+     * Deletes this domain's statements from database
+     * and vectors from vector store.
+     */
+    public function clearStatements(): void
+    {
+        vector()->post('/vectors/delete', [
+            'namespace' => $this->id,
+            'deleteAll' => true,
+        ]);
+
+        $this->statements()->delete();
+    }
 }
