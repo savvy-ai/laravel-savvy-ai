@@ -18,19 +18,9 @@ use Vanderlee\Sentence\Sentence;
  */
 trait TrainsWithAIService
 {
-    public function getSplitter(): Splitter
-    {
-        return new Splitter();
-    }
-
-    public function getVectorizer(): Vectorizer
-    {
-        return new Vectorizer();
-    }
-
     public function train(TrainableContract $trainable, string $text, string $namespace, array $metadata = []): bool
     {
-        $statements = $this->summarizeForTraining($text);
+        $statements = $trainable->getTextSplitter()->split($text);
 
         foreach ($statements as $statement)
         {
@@ -38,25 +28,5 @@ trait TrainsWithAIService
         }
 
         return true;
-    }
-
-    /**
-     * @param string $text
-     *
-     * @return array
-     */
-    public function summarizeForTraining(string $text): array
-    {
-        return $this->getSplitter()->split($text);
-    }
-
-    /**
-     * @param array $sentences
-     *
-     * @return array
-     */
-    public function vectorizeForStorage(array $sentences): array
-    {
-        return $this->getVectorizer()->vectorize($sentences);
     }
 }

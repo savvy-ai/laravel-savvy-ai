@@ -4,6 +4,7 @@ namespace SavvyAI\Models;
 
 use DateTime;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use SavvyAI\Features\Training\Splitter;
 
 /**
  * @property string $id
@@ -37,6 +38,11 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
     protected $appends = [
         'has_been_trained',
     ];
+
+    public function getTextSplitter(): Splitter
+    {
+        return new Splitter();
+    }
 
     public function getStatementRepository(): Builder
     {

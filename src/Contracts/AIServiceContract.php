@@ -21,8 +21,4 @@ interface AIServiceContract
     public function validate(string $text, string $topic): ChatReplyContract;
 
     public function vectorize(string $text): array;
-
-    public function summarizeForTraining(string $text): array;
-
-    public function vectorizeForStorage(array $sentences): array;
 }
