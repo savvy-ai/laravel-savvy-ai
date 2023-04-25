@@ -24,6 +24,11 @@ trait TrainsWithAIService
 
         foreach ($statements as $statement)
         {
+            if (empty($statement))
+            {
+                continue;
+            }
+
             $trainable->getStatementRepository()->create(compact('statement'));
         }
 
