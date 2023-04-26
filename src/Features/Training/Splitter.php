@@ -25,9 +25,9 @@ class Splitter
         $sentences = (new Sentence())->split($text, Sentence::SPLIT_TRIM);
 
         $mergedSentences = [];
-        $lastSentences   = [];
+        $lastSentences = [];
 
-        while(!empty($sentences))
+        while (!empty($sentences))
         {
             $sentence = $currentSentence = array_shift($sentences);
 
@@ -45,12 +45,15 @@ class Splitter
 
             if (mb_strlen($sentence) > $this->maxLength)
             {
-                array_unshift($sentences, $currentSentence);
+                if (!empty($lastSentences))
+                {
+                    array_unshift($sentences, $currentSentence);
 
-                $sentence = implode(' ', $lastSentences);
+                    $sentence = implode(' ', $lastSentences);
+                }
             }
 
-            $lastSentences     = [];
+            $lastSentences = [];
             $mergedSentences[] = $sentence;
         }
 
