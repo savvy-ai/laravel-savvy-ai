@@ -84,6 +84,7 @@ class Dialogue extends Model implements ChatDelegateContract
         $prompt = $this->expand($this->prompt, $incomingMessage->content());
 
         Log::debug('Dialogue::delegate() -> generating reply');
+        Log::debug('Expanded prompt: ' . $prompt);
 
         $this->maxTokens = $this->max_tokens;
         $this->stop = null;

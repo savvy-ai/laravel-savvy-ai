@@ -25,7 +25,7 @@ trait InteractsWithAIService
     public float $temperature      = 0.0;
     public float $frequencyPenalty = 0.0;
     public float $presencePenalty  = 0.0;
-    public ?string $stop           = ' ';
+    public ?string $stop           = null;
 
     protected string $classificationPrompt = <<<'EOT'
 Carefully classify the text to find the correct delegate.
@@ -127,19 +127,19 @@ EOT;
             ], $messages),
         ]);
 
-        $reply = ChatReply::fromAIServiceResponse((array) $result);
+        return ChatReply::fromAIServiceResponse((array) $result);
 
-        if ($reply->isContextUnknown())
-        {
-            throw new UnknownContextException($reply->content());
-        }
+//        if ($reply->isContextUnknown())
+//        {
+//            throw new UnknownContextException($reply->content());
+//        }
+//
+//        if (!$reply->isOnTopic())
+//        {
+//            throw new OffTopicException($reply->content());
+//        }
 
-        if (!$reply->isOnTopic())
-        {
-            throw new OffTopicException($reply->content());
-        }
-
-        return $reply;
+        // return $reply;
     }
 
     /**
