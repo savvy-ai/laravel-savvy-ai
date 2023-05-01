@@ -2,6 +2,26 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.6.0] - 2023-05-01
+
+### Added
+- Added snippet resolver injection with a more specific name to avoid collisions
+- Added support for summarizing for training or splitting with a delimiter
+- 
+
+### Updated
+- Updated AIServiceContract signature to only require text
+- Updated trainable contract and impl to own the splitter factory method
+- Disable reply validation to open up the model for move conversational replies
+- Removed unused classes for sanitizing, segmenting, summarizing, and tokenizing
+- Removed all unused model attributes for Chatbots, and Agents
+- Simplified text splitting and vectorizing during training
+
+### Fixed
+- Fixed issue where max tokens from the Dialogue model were not used when generating replies
+- Fixed issue where splitter would reach an infinite loop due to sentence length overflow
+
+---
 ## [0.5.0] - 2023-04-14
 
 ### Added
