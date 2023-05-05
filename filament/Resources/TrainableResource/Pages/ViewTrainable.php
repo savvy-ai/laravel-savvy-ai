@@ -7,10 +7,12 @@ use Filament\Pages\Actions\Action;
 use Filament\Resources\Form;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 
 class ViewTrainable extends ViewRecord
 {
+    /* @var \SavvyAI\Models\Trainable $resource */
+    public $record;
+
     protected static string $resource = TrainableResource::class;
 
     protected function getActions(): array
@@ -49,7 +51,8 @@ class ViewTrainable extends ViewRecord
     protected function getHeaderWidgets(): array
     {
         return [
-            //PropertyCards::class,
+            TrainableResource\Widgets\Training::class,
+            TrainableResource\Widgets\ChatLink::class
         ];
     }
 }
