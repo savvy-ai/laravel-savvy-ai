@@ -10,9 +10,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use SavvyAI\Models\Trainable;
 
@@ -21,6 +19,8 @@ class TrainableResource extends Resource
     protected static ?string $model = Trainable::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-office-building';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -31,10 +31,8 @@ class TrainableResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(function (Closure $set, $state, $context)
-                    {
-                        if ($context === 'create')
-                        {
+                    ->afterStateUpdated(function (Closure $set, $state, $context) {
+                        if ($context === 'create') {
                             $set('handle', Str::slug($state));
                         }
                     }),
@@ -43,8 +41,7 @@ class TrainableResource extends Resource
                     ->required()
                     ->reactive()
                     ->debounce(1000)
-                    ->afterStateUpdated(function (Closure $set, $state)
-                    {
+                    ->afterStateUpdated(function (Closure $set, $state) {
                         $set('handle', Str::slug($state));
                     }),
             ]);
@@ -74,7 +71,7 @@ class TrainableResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\StatementsRelationManager::class
         ];
     }
 
@@ -91,9 +88,7 @@ class TrainableResource extends Resource
 
     public static function getWidgets(): array
     {
-        return [
-            //PropertyCards::class
-        ];
+        return [];
     }
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
