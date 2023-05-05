@@ -10,8 +10,6 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use SavvyAI\Models\Chatbot;
 
 class ChatbotResource extends Resource
@@ -19,6 +17,8 @@ class ChatbotResource extends Resource
     protected static ?string $model = Chatbot::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-lightning-bolt';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -28,41 +28,7 @@ class ChatbotResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('trainable_id')
                             ->relationship('trainable', 'name')
-                            ->columnSpanFull(),
-
-                        Forms\Components\Textarea::make('prompt')
-                            ->rows(10)
-                            ->columnSpanFull(),
-
-                        Forms\Components\TextInput::make('model')
-                            ->default('gpt-3.5-turbo'),
-
-                        Forms\Components\TextInput::make('max_tokens')
-                            ->default(32)
-                            ->numeric(),
-
-                        Forms\Components\TextInput::make('temperature')
-                            ->default(0.0)
-                            ->minValue(0)
-                            ->maxValue(1)
-                            ->step(.01)
-                            ->numeric(),
-
-                        Forms\Components\TextInput::make('presence_penalty')
-                            ->default(0.0)
-                            ->minValue(0)
-                            ->maxValue(1)
-                            ->step(.01)
-                            ->numeric(),
-
-                        Forms\Components\TextInput::make('frequency_penalty')
-                            ->default(0.0)
-                            ->minValue(0)
-                            ->maxValue(1)
-                            ->step(.01)
-                            ->numeric(),
-
-                        Forms\Components\TextInput::make('stop')
+                            ->columnSpanFull()
                     ])
                     ->columns(2)
             ]);
