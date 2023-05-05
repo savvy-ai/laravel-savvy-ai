@@ -12,7 +12,7 @@ use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class BulkTraining extends Page
+class Training extends Page
 {
     use HasRecordBreadcrumb;
     use InteractsWithRecord;
@@ -25,7 +25,7 @@ class BulkTraining extends Page
 
     protected static string $resource = TrainableResource::class;
 
-    protected static string $view = 'filament.resources.property-resource.pages.bulk-training';
+    protected static string $view = 'filament.resources.property-resource.pages.training';
 
     public function mount($record): void
     {

@@ -82,7 +82,7 @@ class TrainableResource extends Resource
             'create'        => Pages\CreateTrainable::route('/create'),
             'view'          => Pages\ViewTrainable::route('/{record}'),
             'edit'          => Pages\EditTrainable::route('/{record}/edit'),
-            'bulk-training' => Pages\BulkTraining::route('/{record}/bulk-training'),
+            'training' => Pages\Training::route('/{record}/training'),
         ];
     }
 
