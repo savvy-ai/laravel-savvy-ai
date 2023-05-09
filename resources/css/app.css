@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    min-height: 100dvh;
+    min-height: '-webkit-fill-available';
+}
+
+html {
+    height: '-webkit-fill-available';
+}
+
+[x-cloak] {
+    display: none;
+}
+.btn {
+    @apply mb-1 mr-1 flex h-20 w-4/5 max-w-full scale-90 items-center justify-center space-x-4 rounded-lg px-8 py-3 text-base  uppercase text-white shadow-md outline-none transition-all duration-150 ease-linear hover:shadow-xl focus:outline-none sm:w-1/2 sm:text-lg md:h-24 md:w-1/2 md:text-2xl lg:h-32 lg:w-5/12 lg:text-3xl 2xl:w-1/3;
+}
+
+@layer utilities {
+    /* Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+}
