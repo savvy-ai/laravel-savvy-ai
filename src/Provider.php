@@ -75,7 +75,7 @@ class Provider extends \Illuminate\Support\ServiceProvider
 
     public function registerRoutes()
     {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        $this->loadRoutesFrom(sprintf('%s/../routes/web.php', __DIR__));
     }
 
     public function registerPublishing()
