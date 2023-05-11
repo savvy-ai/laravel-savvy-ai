@@ -25,7 +25,7 @@ class Training extends Page
 
     protected static string $resource = TrainableResource::class;
 
-    protected static string $view = 'filament.resources.property-resource.pages.training';
+    protected static string $view = 'filament.resources.trainable-resource.pages.training';
 
     public function mount($record): void
     {

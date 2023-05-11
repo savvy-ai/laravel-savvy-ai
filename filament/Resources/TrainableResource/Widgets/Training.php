@@ -14,7 +14,7 @@ class Training extends Widget
     protected function getViewData(): array
     {
         return [
-            'trainingUrl' => route('filament.resources.domains.training', $this->record),
+            'trainingUrl' => route('filament.resources.trainables.training', $this->record),
         ];
     }
 }
