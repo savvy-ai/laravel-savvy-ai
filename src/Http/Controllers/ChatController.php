@@ -19,7 +19,7 @@ class ChatController extends Controller
             abort(404, 'No training found');
         }
 
-        return Inertia::render('DemoChat', compact('trainable'));
+        return Inertia::render('Chat', compact('trainable'));
     }
 
     public function ask()
