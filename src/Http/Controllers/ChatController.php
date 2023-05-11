@@ -14,10 +14,10 @@ class ChatController extends Controller
 {
     public function show(Request $request, Trainable $trainable): \Inertia\Response
     {
-        if (empty($trainable->statements()->first()))
-        {
-            abort(404, 'No training found');
-        }
+        // if (empty($trainable->statements()->first()))
+        // {
+        //     abort(404, 'No training found');
+        // }
 
         return Inertia::render('Chat', compact('trainable'));
     }
