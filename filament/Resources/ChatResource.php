@@ -3,11 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ChatResource\Pages;
-use App\Models\Chat;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use SavvyAI\Models\Chat;
 
 class ChatResource extends Resource
 {
