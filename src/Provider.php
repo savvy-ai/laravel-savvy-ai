@@ -91,5 +91,9 @@ class Provider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             __DIR__.'/../filament/Resources' => app_path('Filament/Resources'),
         ], 'savvy-ai-filament');
+
+        $this->publishes([
+            __DIR__.'/../resources' => resource_path(),
+        ], 'savvy-ai-resources');
     }
 }
