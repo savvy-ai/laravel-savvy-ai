@@ -20,6 +20,8 @@ use SavvyAI\Features\Training\Splitter;
  */
 class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
 {
+    public ?string $splitAt = null;
+
     protected $casts = [
         'is_training'  => 'boolean',
         'trained_at'   => 'datetime',
