@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ChatResource\Pages;
 
 use App\Filament\Resources\ChatResource;
-use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateChat extends CreateRecord
