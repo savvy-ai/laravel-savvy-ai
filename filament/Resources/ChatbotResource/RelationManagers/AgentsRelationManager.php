@@ -22,10 +22,6 @@ class AgentsRelationManager extends RelationManager
                     ->required()
                     ->columnSpanFull(),
 
-                Forms\Components\Textarea::make('prompt')
-                    ->rows(10)
-                    ->columnSpanFull(),
-
                 Forms\Components\TextInput::make('classification')
                     ->columnSpanFull()
             ]);
