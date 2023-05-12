@@ -32,7 +32,6 @@
     ],
     "require": {
         "php": "^8.2",
-        "filament/filament": "^2.17",
         "illuminate/broadcasting": "^10.4",
         "illuminate/console": "^10.0",
         "illuminate/contracts": "^10.0",
@@ -41,7 +40,6 @@
         "illuminate/queue": "^10.4",
         "illuminate/routing": "^10.4",
         "illuminate/support": "^10.0",
-        "inertiajs/inertia-laravel": "^0.6.8",
         "nyholm/psr7": "^1.5",
         "openai-php/client": "^0.4.0",
         "symfony/http-client": "^6.2",
