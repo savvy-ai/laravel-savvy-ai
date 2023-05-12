@@ -52,7 +52,7 @@ class Chatbot extends Model implements ChatDelegateContract
 
     public function getNameAttribute(): string
     {
-        return 'Some Chatbot';
+        return sprintf('%s Chatbot', $this->trainable->value('name'));
     }
 
     public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
