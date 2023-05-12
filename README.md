@@ -4,11 +4,12 @@ Domain knowledge artificial intelligence framework for Laravel
 ## Usage
 
 ### Install
+> If you're using the provided seeder, you must update your own seeder to run it, e.g. `$this->call(SavvyAISeeder::class)`.
 ```bash
 # install package
 composer require savvy-ai/laravel-savvy-ai
 
-# export migrations
+# export migrations and seeders
 php artisan vendor:publish --tag="savvy-ai-migrations"
 ```
 
@@ -25,15 +26,8 @@ config/savvy-ai.php
 > If you're using filament in your Laravel app, you can export the resources provided by Savvy AI.
 >
 ```bash
-# export filament
+# export filament resources
 php artisan vendor:publish --tag="savvy-ai-filament"
-```
-
-### Client Resources
-> css, js, views
-```bash
-# export client resources
-php artisan vendor:publish --tag="savvy-ai-resources"
 ```
 
 ## Gotchas 💣
