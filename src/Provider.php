@@ -86,14 +86,13 @@ class Provider extends \Illuminate\Support\ServiceProvider
 
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
+            __DIR__.'/../database/seeders' => database_path('seeders')
         ], 'savvy-ai-migrations');
 
         $this->publishes([
-            __DIR__.'/../database/seeders' => database_path('seeders'),
-        ], 'savvy-ai-seeders');
-
-        $this->publishes([
             __DIR__.'/../filament/Resources' => app_path('Filament/Resources'),
+            __DIR__.'/../resources/views/filament' => resource_path('views/filament'),
+            __DIR__.'/../resources/views/vendor' => resource_path('views/vendor'),
         ], 'savvy-ai-filament');
     }
 }
