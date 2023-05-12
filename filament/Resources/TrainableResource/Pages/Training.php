@@ -3,21 +3,29 @@
 namespace App\Filament\Resources\TrainableResource\Pages;
 
 use App\Filament\Resources\TrainableResource;
-use App\Jobs\InitialTrainingJob;
-use App\Savvy\Config\TrainingConfig;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\Concerns\HasRecordBreadcrumb;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use SavvyAI\Models\Trainable;
+use SavvyAI\Savvy;
 
+/**
+ * @property Trainable $record
+ */
 class Training extends Page
 {
     use HasRecordBreadcrumb;
     use InteractsWithRecord;
 
-    public string $data;
+    public string $text         = '';
+    public string $delimiter    = '';
+    public array  $upload       = [];
     public bool   $isTraining   = false;
     public bool   $isProcessing = false;
     public bool   $isGenerating = false;
@@ -34,29 +42,50 @@ class Training extends Page
 
     public function getHeading(): string
     {
-        return "Bulk Training for {$this->record->name}";
-    }
-
-    public function getListeners(): array
-    {
-        return [
-            "echo-private:App.Properties.{$this->record->id},TrainingEvent" => 'notifyTrainingEvent',
-        ];
+        return sprintf('Training for %s', $this->record->name);
     }
 
     protected function getFormSchema(): array
     {
         return [
-            Textarea::make('data')
-                ->placeholder('Paste your property data/manual/rules here.')
-                ->rows(15)
+            Tabs::make('Heading')
+                ->tabs([
+                    Tab::make('Text')
+                        ->schema([
+                            TextArea::make('delimiter')
+                                ->label('Delimiter')
+                                ->rows(2),
+                            Textarea::make('text')
+                                ->label('Text')
+                                ->rows(15)
+                        ]),
+                    Tab::make('Upload')
+                        ->schema([
+                            TextArea::make('delimiter')
+                                ->label('Delimiter')
+                                ->rows(2),
+                            FileUpload::make('upload')
+                                ->label('Upload')
+                                ->acceptedFileTypes(['text/plain'])
+                                ->disk('local')
+                                ->preserveFilenames()
+                        ]),
+                ]),
+        ];
+    }
+
+    protected function getViewData(): array
+    {
+        return [
+            'backUrl' => route('filament.resources.trainables.view', $this->record)
         ];
     }
 
     public function submit()
     {
         $this->validate([
-            'data' => 'required',
+            'text'   => 'required_without:upload',
+            'upload' => 'required_without:text',
         ]);
 
         DB::beginTransaction();
@@ -69,16 +98,22 @@ class Training extends Page
                 'is_training' => true,
             ]);
 
-            $trainingConfig = new TrainingConfig([
-                'maxSegmentTokens' => 250,
-                'user'             => auth()->user(),
-                'property'         => $this->record,
-                'metadata'         => [
-                    'property_id' => $this->record->id,
-                ],
-            ]);
+            $this->record->splitAt = $this->delimiter;
 
-            InitialTrainingJob::dispatch($this->data, $trainingConfig)->afterCommit();
+            if ($this->upload)
+            {
+                $upload   = array_shift($this->upload);
+                $contents = file_get_contents($upload->getRealPath());
+
+                if (!is_string($contents))
+                {
+                    throw new \Exception('File contents could not be read');
+                }
+
+                $this->text = $contents;
+            }
+
+            Savvy::train($this->record, $this->text, $this->record->id);
 
             DB::commit();
         }
@@ -93,30 +128,10 @@ class Training extends Page
             ]);
         }
 
+        $this->record->update([
+            'is_training' => false,
+        ]);
+
         return redirect()->back();
-    }
-
-    public function notifyTrainingEvent($payload)
-    {
-        $name = $payload['eventName'];
-
-        if ($name === TrainingConfig::SEGMENTING)
-        {
-            $this->isProcessing = true;
-        }
-
-        if ($name === TrainingConfig::SUMMARIZING)
-        {
-            $this->isGenerating = true;
-        }
-
-        if ($name === TrainingConfig::COMPLETED)
-        {
-            $this->isComplete = true;
-
-            $this->record->update([
-                'is_training' => false,
-            ]);
-        }
     }
 }
