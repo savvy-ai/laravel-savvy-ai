@@ -27,37 +27,7 @@ class AgentsRelationManager extends RelationManager
                     ->columnSpanFull(),
 
                 Forms\Components\TextInput::make('classification')
-                    ->columnSpanFull(),
-
-                Forms\Components\TextInput::make('model')
-                    ->default('gpt-3.5-turbo'),
-
-                Forms\Components\TextInput::make('max_tokens')
-                    ->default(32)
-                    ->numeric(),
-
-                Forms\Components\TextInput::make('temperature')
-                    ->default(0.0)
-                    ->minValue(0)
-                    ->maxValue(1)
-                    ->step(.01)
-                    ->numeric(),
-
-                Forms\Components\TextInput::make('presence_penalty')
-                    ->default(0.0)
-                    ->minValue(0)
-                    ->maxValue(1)
-                    ->step(.01)
-                    ->numeric(),
-
-                Forms\Components\TextInput::make('frequency_penalty')
-                    ->default(0.0)
-                    ->minValue(0)
-                    ->maxValue(1)
-                    ->step(.01)
-                    ->numeric(),
-
-                Forms\Components\TextInput::make('stop')
+                    ->columnSpanFull()
             ]);
     }
 
