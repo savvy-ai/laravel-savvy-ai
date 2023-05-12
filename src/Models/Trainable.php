@@ -70,4 +70,18 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
     {
         return $this->statements()->exists();
     }
+
+    public function publish(): void
+    {
+        $this->update([
+            'published_at' => now(),
+        ]);
+    }
+
+    public function unpublish(): void
+    {
+        $this->update([
+            'published_at' => null,
+        ]);
+    }
 }
