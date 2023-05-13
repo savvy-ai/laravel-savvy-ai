@@ -5,6 +5,7 @@ namespace SavvyAI\Models;
 use DateTime;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use SavvyAI\Features\Training\Splitter;
+use SavvyAI\Features\Training\Vectorizer;
 
 /**
  * @property string $id
@@ -23,8 +24,8 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
     public ?string $splitAt = null;
 
     protected $casts = [
-        'is_training'  => 'boolean',
-        'trained_at'   => 'datetime',
+        'is_training' => 'boolean',
+        'trained_at' => 'datetime',
         'published_at' => 'datetime',
     ];
 
@@ -41,6 +42,19 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
         'has_been_trained',
     ];
 
+    /**
+     * @return int
+     */
+    public function getBatchSize(): int
+    {
+        return 25;
+    }
+
+    public function getMaxTokensPerBatch(): int
+    {
+        return 2000;
+    }
+
     public function getTextSplitter(): Splitter
     {
         return new Splitter();
@@ -49,6 +63,13 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
     public function getStatementRepository(): Builder
     {
         return $this->statements();
+    }
+
+    public function vectorize(array $statements): array
+    {
+        $vectorizer = new Vectorizer($this->getMaxTokensPerBatch());
+
+        return $vectorizer->vectorize($statements);
     }
 
     public function chatbot(): \Illuminate\Database\Eloquent\Relations\HasOne

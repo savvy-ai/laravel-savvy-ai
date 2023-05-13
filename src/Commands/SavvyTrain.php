@@ -3,6 +3,7 @@
 namespace SavvyAI\Commands;
 
 use Illuminate\Console\Command;
+use SavvyAI\Models\Trainable;
 use SavvyAI\Savvy;
 
 class SavvyTrain extends Command
@@ -29,7 +30,7 @@ class SavvyTrain extends Command
     public function handle(): int
     {
         $text   = file_get_contents($this->argument('file'));
-        $stored =  Savvy::train($text, $this->argument('namespace'));
+        $stored =  Savvy::trainInBatches(Trainable::query()->firstOrFail(), $text, $this->argument('namespace'));
 
         if (!$stored)
         {

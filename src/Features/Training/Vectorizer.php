@@ -11,11 +11,11 @@ class Vectorizer
         $this->maxTokens = $maxTokens;
     }
 
-    public function vectorize(array $sentences): array
+    public function vectorize(array $statements): array
     {
         $response = ai()->embeddings()->create([
             'model' => 'text-embedding-ada-002',
-            'input' => $sentences,
+            'input' => $statements,
         ]);
 
         $vectors = [];
@@ -23,9 +23,9 @@ class Vectorizer
         foreach ($response->embeddings as $embedding)
         {
             $vectors[] = [
-                'id'       => $embedding->index,
-                'values'   => $embedding->embedding,
-                'sentence' => $sentences[$embedding->index],
+                'id' => $embedding->index,
+                'values' => $embedding->embedding,
+                'statement' => $statements[$embedding->index],
             ];
         }
 

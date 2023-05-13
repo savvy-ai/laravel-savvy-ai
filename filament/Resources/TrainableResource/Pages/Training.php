@@ -113,7 +113,7 @@ class Training extends Page
                 $this->text = $contents;
             }
 
-            Savvy::train($this->record, $this->text, $this->record->id);
+            Savvy::trainInBatches($this->record, $this->text, $this->record->id);
 
             DB::commit();
         }

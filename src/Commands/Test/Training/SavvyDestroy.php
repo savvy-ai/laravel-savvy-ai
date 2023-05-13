@@ -26,10 +26,16 @@ class SavvyDestroy extends Command
      *
      * @return int
      */
-    public function handle(): int
+    public function handle()
     {
-        $this->comment(print_r((new DummyForTraining())->destroy($this->argument('namespace')), true));
+        vector()->post(
+            '/vectors/delete',
+            [
+                'namespace' => $this->argument('namespace'),
+                'deleteAll' => true,
+            ],
+        )->json();
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 }

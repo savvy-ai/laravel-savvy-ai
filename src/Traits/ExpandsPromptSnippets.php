@@ -4,6 +4,7 @@ namespace SavvyAI\Traits;
 
 use Exception;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use SavvyAI\Contracts\SnippetResolverContract;
 use SavvyAI\Snippets\Snippet;
 
@@ -54,7 +55,7 @@ trait ExpandsPromptSnippets
             }
             catch (Exception $e)
             {
-                //
+                Log::error($e->getMessage(), $e->getTrace());
             }
         }
 

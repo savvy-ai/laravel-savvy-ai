@@ -63,8 +63,9 @@
         }
     },
     "require-dev": {
-        "pestphp/pest": "^2.3",
+        "filament/filament": "^2.17",
         "mockery/mockery": "^1.5",
+        "pestphp/pest": "^2.3",
         "spatie/laravel-ignition": "^2.1"
     }
 }
