@@ -4,6 +4,7 @@ namespace SavvyAI\Models;
 
 use DateTime;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use SavvyAI\Features\Training\DelimiterSplitter;
 use SavvyAI\Features\Training\Splitter;
 use SavvyAI\Features\Training\Vectorizer;
 
@@ -57,6 +58,11 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
 
     public function getTextSplitter(): Splitter
     {
+        if (!empty($this->splitAt))
+        {
+            return new DelimiterSplitter($this->splitAt);
+        }
+
         return new Splitter();
     }
 

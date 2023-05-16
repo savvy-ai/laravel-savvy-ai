@@ -68,6 +68,7 @@ class Training extends Page
                                 ->label('Upload')
                                 ->acceptedFileTypes(['text/plain'])
                                 ->disk('local')
+                                ->multiple()
                                 ->preserveFilenames()
                         ]),
                 ]),
@@ -102,15 +103,9 @@ class Training extends Page
 
             if ($this->upload)
             {
-                $upload   = array_shift($this->upload);
-                $contents = file_get_contents($upload->getRealPath());
-
-                if (!is_string($contents))
-                {
-                    throw new \Exception('File contents could not be read');
-                }
-
-                $this->text = $contents;
+                $this->text = array_reduce($this->upload, function ($carry, $item) {
+                    return $carry .= file_get_contents($item->getRealPath());
+                });
             }
 
             Savvy::trainInBatches($this->record, $this->text, $this->record->id);
