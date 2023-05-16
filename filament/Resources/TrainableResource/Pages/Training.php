@@ -103,7 +103,9 @@ class Training extends Page
 
             if ($this->upload)
             {
-                $this->text = $this->extractUploadedText();
+                $this->text = array_reduce($this->upload, function ($carry, $item) {
+                    return $carry .= file_get_contents($item->getRealPath());
+                });
             }
 
             Savvy::trainInBatches($this->record, $this->text, $this->record->id);
@@ -126,36 +128,5 @@ class Training extends Page
         ]);
 
         return redirect()->back();
-    }
-
-    private function extractUploadedText(): string
-    {
-        if (count($this->upload) === 1)
-        {
-            $contents = file_get_contents($this->upload[0]->getRealPath());
-
-            if (!is_string($contents))
-            {
-                throw new \Exception('File contents could not be read');
-            }
-
-            return $contents;
-        }
-
-        $text = '';
-
-        foreach ($this->upload as $upload)
-        {
-            $contents = file_get_contents($upload->getRealPath());
-
-            if (!is_string($contents))
-            {
-                throw new \Exception('File contents could not be read');
-            }
-
-            $text .= $contents;
-        }
-
-        return $text;
     }
 }
