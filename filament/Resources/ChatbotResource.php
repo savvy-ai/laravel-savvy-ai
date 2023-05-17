@@ -32,11 +32,12 @@ class ChatbotResource extends Resource
                     Forms\Components\TextArea::make('welcome_message')
                         ->columnSpanFull()
                         ->disableAutocomplete(),
-                    Forms\Components\TextArea::make('welcome_prompts')
+                    Forms\Components\Repeater::make('welcome_prompts')
+                        ->schema([
+                            Forms\Components\TextInput::make('prompt')->required(),
+                        ])
                         ->columnSpanFull()
-                        ->hint('Each prompt MUST be on its own line.')
-                        ->hintIcon('heroicon-o-information-circle')
-                        ->disableAutocomplete(),
+                        ->maxItems(3)
                 ])
                 ->columns(2)
         ]);
