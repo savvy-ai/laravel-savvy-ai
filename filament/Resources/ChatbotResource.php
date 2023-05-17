@@ -23,15 +23,24 @@ class ChatbotResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Card::make()
-                    ->schema([
-                        Forms\Components\Select::make('trainable_id')
-                            ->relationship('trainable', 'name')
-                            ->columnSpanFull()
-                    ])
-                    ->columns(2)
-            ]);
+        ->schema([
+            Card::make()
+                ->schema([
+                    Forms\Components\Select::make('trainable_id')
+                        ->relationship('trainable', 'name')
+                        ->columnSpanFull(),
+                    Forms\Components\TextArea::make('welcome_message')
+                        ->columnSpanFull()
+                        ->disableAutocomplete(),
+                    Forms\Components\Repeater::make('welcome_prompts')
+                        ->schema([
+                            Forms\Components\TextInput::make('prompt')->required(),
+                        ])
+                        ->columnSpanFull()
+                        ->maxItems(3)
+                ])
+                ->columns(2)
+        ]);
     }
 
     public static function table(Table $table): Table
