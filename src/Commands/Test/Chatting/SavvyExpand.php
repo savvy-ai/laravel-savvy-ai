@@ -3,11 +3,11 @@
 namespace SavvyAI\Commands\Test\Chatting;
 
 use Illuminate\Console\Command;
-use SavvyAI\Traits\ExpandsPromptSnippets;
+use SavvyAI\Traits\ExpandsSnippets;
 
 class SavvyExpand extends Command
 {
-    use ExpandsPromptSnippets;
+    use ExpandsSnippets;
 
     /**
      * The name and signature of the console command.

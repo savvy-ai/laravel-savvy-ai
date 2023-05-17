@@ -30,7 +30,7 @@ class SnippetResolver implements SnippetResolverContract
 
 class SnippetExpansionTest extends \stdClass
 {
-    use \SavvyAI\Traits\ExpandsPromptSnippets;
+    use \SavvyAI\Traits\ExpandsSnippets;
 }
 
 it('can expand prompts without snippets', function () {

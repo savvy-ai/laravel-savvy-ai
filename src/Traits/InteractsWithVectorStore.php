@@ -18,7 +18,7 @@ trait InteractsWithVectorStore
         $matches = vector()->post('/query', [
             'vector' => $vector,
             'namespace' => $namespace,
-            'topK' => 20,
+            'topK' => 10,
         ])->json('matches');
 
         if ($statements)

@@ -18,6 +18,7 @@ class ChatReply implements ChatReplyContract
 {
     protected array $usage;
     protected array $message;
+    protected array $media;
 
     /**
      * @param array $response Result from the completions API request
@@ -30,20 +31,47 @@ class ChatReply implements ChatReplyContract
         );
     }
 
-    public function __construct(array $usage, array $message)
+    public function __construct(array $usage, array $message, ?array $media = null)
     {
         $this->usage = $usage;
         $this->message = $message;
+        $this->media = $media ?? [];
     }
 
-    public function role(): string
+    public function role(?string $role = null): string
     {
+        if (!empty($role))
+        {
+            $this->message['role'] = $role;
+
+            return $role;
+        }
+
         return $this->message['role'] ?? '';
     }
 
-    public function content(): string
+    public function content(?string $content = null): string
     {
+        if (!empty($content))
+        {
+            $this->message['content'] = $content;
+
+            return $content;
+        }
+
         return $this->message['content'] ?? '';
+    }
+
+    public function media(?array $media = null): array
+    {
+        if (!empty($media))
+        {
+            $this->media = $media;
+
+            return $media;
+        }
+
+        return $this->media;
     }
 
     public function extractDelegateName(): string

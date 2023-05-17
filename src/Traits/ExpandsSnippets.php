@@ -9,10 +9,10 @@ use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Contracts\SnippetResolverContract;
 use SavvyAI\Snippets\Snippet;
 
-trait ExpandsPromptSnippets
+trait ExpandsSnippets
 {
     const CAST_REGEX = '/([a-zA-Z0-9_-]+):\s?(\w+)/';
-    const SNIPPET_REGEX = '/<(\S+)(\s+[^>]+)?\s*\/?>/';
+    const SNIPPET_REGEX = '/\[(\S+)(\s+[^>]+)?\s*\/?\]/';
     const ATTRIBUTE_REGEX = '/([^\s=]+)="([^"]+)"/';
 
     protected ?SnippetResolverContract $snippetResolver = null;
@@ -32,7 +32,7 @@ trait ExpandsPromptSnippets
      */
     public function expandPrompt(string $prompt, string $input = ''): string
     {
-        return $this->expand($prompt, $input);
+        return $this->expand($prompt, $input)['expanded'] ?? '';
     }
 
     /**
@@ -44,7 +44,7 @@ trait ExpandsPromptSnippets
      */
     public function expandReply(ChatReplyContract $reply, string $input = ''): ChatReplyContract
     {
-        $media = $this->expand($reply->content(), $input);
+        $media = $this->expand($reply->content(), $input)['media'] ?? [];
 
         $reply->media($media);
 
@@ -55,11 +55,14 @@ trait ExpandsPromptSnippets
      * @param string $text
      * @param string $input
      *
-     * @return string|array
+     * @return array
      */
-    public function expand(string $text, string $input = ''): string|array
+    public function expand(string $text, string $input = ''): array
     {
-        preg_match_all(self::SNIPPET_REGEX, $text, $matches, PREG_SET_ORDER);
+        $media = [];
+        $expanded = $text;
+
+        preg_match_all(self::SNIPPET_REGEX, $expanded, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match)
         {
@@ -79,7 +82,10 @@ trait ExpandsPromptSnippets
                     ? $this->snippetResolver->resolve($snippet, $attributes)
                     : $this->resolveSnippet($snippet, $attributes);
 
-                $text = str_replace($match[0], $snippet->use($input), $text);
+                $snippet->expand($input);
+
+                $media = array_merge($media, $snippet->media());
+                $expanded = str_replace($match[0], $snippet->expended(), $expanded);
             }
             catch (Exception $e)
             {
@@ -87,7 +93,7 @@ trait ExpandsPromptSnippets
             }
         }
 
-        return $text;
+        return compact('expanded', 'media');
     }
 
     /**

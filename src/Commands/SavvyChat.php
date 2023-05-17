@@ -7,7 +7,6 @@ use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Models\Chat;
-use SavvyAI\Models\Message;
 use SavvyAI\Models\Trainable;
 use Throwable;
 
@@ -54,7 +53,7 @@ class SavvyChat extends Command
             'Chat' => $chat->id,
         ], true));
 
-        while(true)
+        while (true)
         {
             $prompt = $this->ask('User');
 
@@ -63,8 +62,8 @@ class SavvyChat extends Command
                 break;
             }
 
-            $chatbot  = $trainable->chatbot;
-            $agent    = $chat->agent;
+            $chatbot = $trainable->chatbot;
+            $agent = $chat->agent;
             $dialogue = $chat->dialogue;
 
             if ($agent && $dialogue)
@@ -73,9 +72,19 @@ class SavvyChat extends Command
                 $chatbot->setSelectedDelegate($agent);
             }
 
-            $message = $chat->reply($trainable->chatbot, new ChatMessage(Role::User, $prompt));
 
-            $this->info(sprintf(' Savvy: %s > %s', PHP_EOL, $message->content()));
+            try
+            {
+                $message = $chat->reply($chatbot, new ChatMessage(Role::User, $prompt));
+            }
+            catch (\Throwable $e)
+            {
+                $message = new ChatMessage(Role::Assistant, $e->getMessage());
+            }
+
+            // $message = $chat->reply($trainable->chatbot, new ChatMessage(Role::User, $prompt));
+
+            $this->info(sprintf(' Savvy: %s > %s%s %s', PHP_EOL, $message->content(), PHP_EOL, print_r($message->media(), true)));
         }
 
         return self::SUCCESS;

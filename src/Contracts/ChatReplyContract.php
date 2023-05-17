@@ -14,8 +14,9 @@ interface ChatReplyContract
 {
     public static function fromAIServiceResponse(array $response): self;
 
-    public function role(): string;
-    public function content(): string;
+    public function role(?string $role = null): string;
+    public function content(?string $content = null): string;
+    public function media(?array $media = null): array;
 
     public function totalTokensUsed(): int;
     public function promptTokensUsed(): int;

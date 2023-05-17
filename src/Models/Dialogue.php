@@ -12,7 +12,7 @@ use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Traits\Delegatable;
-use SavvyAI\Traits\ExpandsPromptSnippets;
+use SavvyAI\Traits\ExpandsSnippets;
 use SavvyAI\Traits\InteractsWithAIService;
 
 /**
@@ -22,7 +22,8 @@ class Dialogue extends Model implements ChatDelegateContract
 {
     use Delegatable;
     use InteractsWithAIService;
-    use ExpandsPromptSnippets;
+    use ExpandsSnippets;
+
 
     protected $fillable = [
         'agent_id',
@@ -81,7 +82,7 @@ class Dialogue extends Model implements ChatDelegateContract
 
         Log::debug('Dialogue::delegate() -> expanding prompt snippets');
 
-        $prompt = $this->expand($this->prompt, $incomingMessage->content());
+        $prompt = $this->expandPrompt($this->prompt, $incomingMessage->content());
 
         Log::debug('Dialogue::delegate() -> generating reply');
         Log::debug('Expanded prompt: ' . $prompt);
@@ -94,6 +95,8 @@ class Dialogue extends Model implements ChatDelegateContract
             ...$chat->getChatHistory(),
             $incomingMessage,
         ]);
+
+        $reply = $this->expandReply($reply, $incomingMessage->content());
 
         $chat->addReply($reply);
 

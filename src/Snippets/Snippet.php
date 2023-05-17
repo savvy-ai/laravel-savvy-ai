@@ -6,6 +6,9 @@ use SavvyAI\Contracts\SnippetResolverContract;
 
 abstract class Snippet
 {
+    protected array $media = [];
+    protected string $expanded = '';
+
     public function __construct(array $attributes = [])
     {
         foreach ($attributes as $key => $value)
@@ -17,5 +20,15 @@ abstract class Snippet
         }
     }
 
-    abstract public function use(string $input): string;
+    public function expended(): string
+    {
+        return $this->expanded;
+    }
+
+    public function media(): array
+    {
+        return $this->media;
+    }
+
+    abstract public function expand(string $input): self;
 }
