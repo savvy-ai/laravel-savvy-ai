@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('chatbots', function (Blueprint $table) {
             // add welcome_message column after trainable_id
             $table->text('welcome_message')->after('trainable_id')->nullable();
-            $table->text('welcome_prompts')->after('welcome_message')->nullable();
+            $table->json('welcome_prompts')->after('welcome_message')->nullable();
         });
     }
 
