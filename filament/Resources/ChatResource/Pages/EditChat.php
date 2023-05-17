@@ -16,9 +16,9 @@ class EditChat extends EditRecord
     {
         return $form
             ->schema([
-                Select::make('domain')
-                    ->columnSpanFull()
-                    ->relationship('domain', 'name'),
+                Select::make('trainable')
+                    ->relationship('trainable', 'name')
+                    ->columnSpanFull(),
                 Select::make('agent')
                     ->label('Current Agent')
                     ->relationship('agent', 'name'),
