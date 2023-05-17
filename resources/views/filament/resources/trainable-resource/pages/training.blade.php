@@ -2,11 +2,14 @@
 <form wire:submit.prevent="submit">
     {{ $this->form }}
 
+    <br/>
+
     <div class="text-right mt-8" wire:loading.remove wire:target="submit">
         <x-filament::button type="submit">
             Start Training
         </x-filament::button>
     </div>
+
     <div class="text-right mt-8" wire:loading.block wire:target="submit">
         <x-filament::button disabled>
             <svg class="inline animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
