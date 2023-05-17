@@ -24,6 +24,10 @@ class Chatbot extends Model implements ChatDelegateContract
 {
     use Delegatable;
 
+    protected $casts = [
+        'welcome_prompts' => 'array'
+    ];
+
     protected $fillable = [
         'trainable_id',
         'welcome_message',
