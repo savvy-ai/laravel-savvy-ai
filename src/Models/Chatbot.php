@@ -57,15 +57,6 @@ class Chatbot extends Model implements ChatDelegateContract
         return sprintf('%s Chatbot', $this->trainable->value('name'));
     }
 
-    public function getWelcomePrompts(): array
-    {
-        $prompts = array_map(function ($prompt) {
-            return trim($prompt);
-        }, explode("\n", $this->welcome_prompts));
-
-        return array_filter($prompts);
-    }
-
     public function trainable(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Trainable::class);
