@@ -127,6 +127,6 @@ class Training extends Page
             'is_training' => false,
         ]);
 
-        return redirect()->back();
+        return redirect()->route('filament.resources.trainables.view', $this->record);
     }
 }
