@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Traits\Delegatable;
@@ -35,6 +36,18 @@ class Chatbot extends Model implements ChatDelegateContract
     ];
 
     protected $appends = ['name'];
+
+    protected static function booted(): void
+    {
+        if (request()->routeIs('filament.*'))
+        {
+            static::addGlobalScope('user', function (Builder $builder) {
+                $builder->whereHas('trainable', function (Builder $builder) {
+                    $builder->where('user_id', auth()->id());
+                });
+            });
+        }
+    }
 
     public function getDelegateId(): int|string
     {
