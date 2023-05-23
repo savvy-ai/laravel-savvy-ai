@@ -1,5 +1,11 @@
 # Savvy AI for Laravel
 Domain knowledge artificial intelligence framework for Laravel
+---
+## [0.6.1] - 2023-05-23
+
+### Updated
+- Updated classification prompt to reduce the chances of hallucinating delegates
+- Updated reply generation with reply validation for unknown context and off-topic inspection
 
 ---
 ## [0.6.0] - 2023-05-01
@@ -7,7 +13,6 @@ Domain knowledge artificial intelligence framework for Laravel
 ### Added
 - Added snippet resolver injection with a more specific name to avoid collisions
 - Added support for summarizing for training or splitting with a delimiter
-- 
 
 ### Updated
 - Updated AIServiceContract signature to only require text
