@@ -9,7 +9,6 @@ use SavvyAI\Exceptions\OffTopicException;
 use SavvyAI\Exceptions\UnknownContextException;
 use SavvyAI\Features\Chatting\ChatReply;
 use SavvyAI\Features\Chatting\Role;
-use SavvyAI\Savvy;
 
 /**
  * Makes calls to the OpenAI API to classify text, validate replies, and to chat
@@ -28,13 +27,12 @@ trait InteractsWithAIService
     public ?string $stop           = null;
 
     protected string $classificationPrompt = <<<'EOT'
-Carefully classify the text to find the correct delegate.
-
-You MUST classify the text according to the following rules:
+Strictly follow the {!! count($subjects) + 1 !!} rules provided below to classify the text.
 @foreach($subjects as $subject)
 - {!! $subject !!}
 @endforeach
 - If you cannot CONFIDENTLY classify the text, you MUST say "@Unknown()"
+Keep these rules in mind when classifying the text, and do not deviate from them.
 EOT;
 
     protected string $topicValidationPrompt = <<<'EOT'
@@ -127,19 +125,19 @@ EOT;
             ], $messages),
         ]);
 
-        return ChatReply::fromAIServiceResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $result);
 
-//        if ($reply->isContextUnknown())
-//        {
-//            throw new UnknownContextException($reply->content());
-//        }
-//
-//        if (!$reply->isOnTopic())
-//        {
-//            throw new OffTopicException($reply->content());
-//        }
+       if ($reply->isContextUnknown())
+       {
+           throw new UnknownContextException($reply->content());
+       }
 
-        // return $reply;
+       if (!$reply->isOnTopic())
+       {
+           throw new OffTopicException($reply->content());
+       }
+
+        return $reply;
     }
 
     /**
