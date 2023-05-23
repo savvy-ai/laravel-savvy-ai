@@ -21,4 +21,9 @@ class EditTrainable extends EditRecord
     {
         return [];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return route('filament.resources.trainables.view', $this->record->id);
+    }
 }
