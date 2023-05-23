@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
@@ -25,6 +26,18 @@ class Chat extends Model implements ChatContract
         'agent_id',
         'dialogue_id',
     ];
+
+    protected static function booted(): void
+    {
+        if (request()->routeIs('filament.*'))
+        {
+            static::addGlobalScope('user', function (Builder $builder) {
+                $builder->whereHas('trainable', function (Builder $builder) {
+                    $builder->where('user_id', auth()->id());
+                });
+            });
+        }
+    }
 
     public function getChatId(): int|string
     {

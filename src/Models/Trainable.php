@@ -43,6 +43,16 @@ class Trainable extends Model implements \SavvyAI\Contracts\TrainableContract
         'has_been_trained',
     ];
 
+    protected static function booted(): void
+    {
+        if (request()->routeIs('filament.*'))
+        {
+            static::addGlobalScope('user', function (Builder $builder) {
+                $builder->where('user_id', auth()->id());
+            });
+        }
+    }
+
     /**
      * @return int
      */
