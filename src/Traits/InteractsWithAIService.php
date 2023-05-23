@@ -127,19 +127,19 @@ EOT;
             ], $messages),
         ]);
 
-        return ChatReply::fromAIServiceResponse((array) $result);
+        $reply = ChatReply::fromAIServiceResponse((array) $result);
 
-//        if ($reply->isContextUnknown())
-//        {
-//            throw new UnknownContextException($reply->content());
-//        }
-//
-//        if (!$reply->isOnTopic())
-//        {
-//            throw new OffTopicException($reply->content());
-//        }
+       if ($reply->isContextUnknown())
+       {
+           throw new UnknownContextException($reply->content());
+       }
 
-        // return $reply;
+       if (!$reply->isOnTopic())
+       {
+           throw new OffTopicException($reply->content());
+       }
+
+        return $reply;
     }
 
     /**
