@@ -1,6 +1,12 @@
 # Savvy AI for Laravel
 Domain knowledge artificial intelligence framework for Laravel
 ---
+## [0.6.2] - 2023-05-25
+
+### Added
+- Added support for generating replies that include media (links) to be rendered along with the message
+
+---
 ## [0.6.1] - 2023-05-23
 
 ### Updated
