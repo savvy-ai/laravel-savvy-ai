@@ -81,23 +81,25 @@ class Dialogue extends Model implements ChatDelegateContract
 
         Log::debug('Dialogue::delegate() -> expanding prompt snippets');
 
-        $prompt = $this->expand($this->prompt, $incomingMessage->content());
+        $expanded = $this->expand($this->prompt, $incomingMessage->content());
+
+        Log::debug('Prompt media', $expanded->media);
 
         Log::debug('Dialogue::delegate() -> generating reply');
-        Log::debug('Expanded prompt: ' . $prompt);
+        Log::debug('Expanded prompt: ' . $expanded->text);
 
         $this->maxTokens = $this->max_tokens;
         $this->stop = null;
 
         $reply = $this->chat([
-            new ChatMessage(Role::System, $prompt),
+            new ChatMessage(Role::System, $expanded->text),
             ...$chat->getChatHistory(),
             $incomingMessage,
         ]);
 
         $chat->addReply($reply);
 
-        $outgoingMessage = ChatMessage::fromChatReply($reply);
+        $outgoingMessage = ChatMessage::fromChatReply($reply, $expanded->media);
 
         $this->maxTokens   = 16;
         $this->temperature = 0.0;
@@ -113,7 +115,6 @@ class Dialogue extends Model implements ChatDelegateContract
         $chat->addReply($reply);
 
         Log::debug('Dialogue::delegate() -> reply is on topic');
-
 
         return $outgoingMessage;
     }

@@ -4,7 +4,9 @@ namespace SavvyAI\Traits;
 
 use Exception;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use SavvyAI\Contracts\SnippetResolverContract;
+use SavvyAI\Snippets\Expanded;
 use SavvyAI\Snippets\Snippet;
 
 trait ExpandsPromptSnippets
@@ -26,10 +28,12 @@ trait ExpandsPromptSnippets
      * @param string $prompt
      * @param string $input
      *
-     * @return string
+     * @return Expanded
      */
-    public function expand(string $prompt, string $input = ''): string
+    public function expand(string $prompt, string $input = ''): Expanded
     {
+        $expanded = new Expanded($prompt, []);
+
         preg_match_all(self::SNIPPET_REGEX, $prompt, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match)
@@ -50,15 +54,18 @@ trait ExpandsPromptSnippets
                     ? $this->snippetResolver->resolve($snippet, $attributes)
                     : $this->resolveSnippet($snippet, $attributes);
 
-                $prompt = str_replace($match[0], $snippet->use($input), $prompt);
+                $used = $snippet->use($input);
+
+                $expanded->text = str_replace($match[0], $used->text, $expanded->text);
+                $expanded->media = array_merge($expanded->media, $used->media);
             }
             catch (Exception $e)
             {
-                //
+                Log::error($e->getMessage(), $e->getTrace());
             }
         }
 
-        return $prompt;
+        return $expanded;
     }
 
     /**
