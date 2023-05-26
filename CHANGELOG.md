@@ -1,5 +1,13 @@
 # Savvy AI for Laravel
 Domain knowledge artificial intelligence framework for Laravel
+
+---
+## [0.6.3] - 2023-05-26
+
+### Updated
+- Updated the way media links are generated to be more relevant
+- Updated media links in rich replies to be at most 3
+
 ---
 ## [0.6.2] - 2023-05-25
 

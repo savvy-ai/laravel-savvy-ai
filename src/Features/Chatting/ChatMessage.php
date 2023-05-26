@@ -2,6 +2,7 @@
 
 namespace SavvyAI\Features\Chatting;
 
+use Illuminate\Support\Facades\Log;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
 
@@ -22,9 +23,9 @@ class ChatMessage implements ChatMessageContract
 
     public function __construct(Role $role = Role::User, string $content = '', ?array $media = null)
     {
-        $this->role    = $role;
+        $this->role = $role;
         $this->content = $content;
-        $this->media   = $media ?? [];
+        $this->media = $media ?? [];
     }
 
     public function role(): Role
@@ -42,6 +43,11 @@ class ChatMessage implements ChatMessageContract
         return $this->media;
     }
 
+    public function relevantMedia(): array
+    {
+        return $this->applyRelevanceFilter($this->content, $this->media);
+    }
+
     /**
      * Get the instance as an array
      *
@@ -50,7 +56,7 @@ class ChatMessage implements ChatMessageContract
     public function asArray(): array
     {
         return [
-            'role'    => $this->role->value,
+            'role' => $this->role->value,
             'content' => $this->content,
         ];
     }
@@ -63,9 +69,34 @@ class ChatMessage implements ChatMessageContract
     public function asPersistable(): array
     {
         return [
-            'role'    => $this->role->value,
+            'role' => $this->role->value,
             'content' => $this->content,
-            'media'   => $this->media,
+            'media' => $this->applyRelevanceFilter($this->content, $this->media),
         ];
+    }
+
+    protected function applyRelevanceFilter(string $text, ?array $media = []): array
+    {
+        if (empty($media))
+        {
+            return $media;
+        }
+
+        foreach ($media as &$value)
+        {
+            $value['score'] = similar_text(strtoupper($text), strtoupper($value['title']));
+        }
+
+        usort($media, function ($a, $b) {
+            return $b['score'] <=> $a['score'];
+        });
+
+        Log::debug('Media scored', $media);
+
+        $media = array_filter($media, function ($value) {
+            return $value['score'] >= 10;
+        });
+
+        return array_slice($media, 0, 3);
     }
 }
