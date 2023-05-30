@@ -2,36 +2,37 @@
 
 namespace SavvyAI\Http\Controllers;
 
-use SavvyAI\Models\Chat;
-use SavvyAI\Models\Trainable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
+use SavvyAI\Models\Chat;
+use SavvyAI\Models\Trainable;
 
 class ChatController extends Controller
 {
-    public function show(Request $request, Trainable $trainable): \Inertia\Response
+    public function show(Trainable $trainable): \Inertia\Response
     {
-        // if (empty($trainable->statements()->first()))
-        // {
-        //     abort(404, 'No training found');
-        // }
+         if (empty($trainable->statements()->first()))
+         {
+             Log::warning('No statements found for trainable: ' . $trainable->id);
+         }
 
-        return Inertia::render('Chat', compact('trainable'));
+        return Inertia::render('DemoChat', compact('trainable'));
     }
 
-    public function ask()
+    public function ask(Request $request): array
     {
-        request()->validate(['prompt' => 'required|string|max:255']);
+        $request->validate(['prompt' => 'required|string|max:255']);
 
-        $chatId   = request()->post('chatId');
-        $domainId = request()->post('domainId');
-        $prompt   = request()->post('prompt');
+        $prompt = $request->input('prompt');
+        $chatId = $request->input('chatId');
+        $trainableId = $request->input('domainId');
 
         $trainable = Trainable::query()
-            ->where('id', $domainId)
+            ->where('id', $trainableId)
             ->with('chatbot.agents.dialogues')
             ->firstOrFail();
 
@@ -40,11 +41,11 @@ class ChatController extends Controller
             ->with(['agent', 'dialogue'])
             ->firstOrCreate([
                 'id' => $chatId,
-                'domain_id' => $domainId
+                'trainable_id' => $trainableId
             ]);
 
-        $chatbot  = $trainable->chatbot;
-        $agent    = $chat->agent;
+        $chatbot = $trainable->chatbot;
+        $agent = $chat->agent;
         $dialogue = $chat->dialogue;
 
         if ($agent && $dialogue)
@@ -63,17 +64,17 @@ class ChatController extends Controller
         }
 
         return [
-            'reply'    => $message->content(),
-            'agentId'  => $chat->agent->id ?? null,
-            'chatId'   => $chat->id ?? null,
+            'reply' => $message->content(),
+            'agentId' => $chat->agent->id ?? null,
+            'chatId' => $chat->id ?? null,
             'domainId' => $trainable->id ?? null
         ];
     }
 
-    public function history()
+    public function history(Request $request): array
     {
         $chat = Chat::query()
-            ->where('id', request()->post('chatId'))
+            ->where('id', $request->input('chatId'))
             ->first();
 
         if (empty($chat->messages))
@@ -86,36 +87,5 @@ class ChatController extends Controller
         return [
             'history' => $chat->messages
         ];
-    }
-
-    public function clear()
-    {
-        $chatId = request()->post('chatId');
-        $chat   = Chat::query()->where('id', $chatId)->first();
-
-        if (empty($chat))
-        {
-            return [
-                'success' => false,
-                'message' => 'Chat not found.'
-            ];
-        }
-        
-        try
-        {
-            $chat->clearChatHistory();
-
-            return [
-                'success' => true,
-                'message' => 'Chat history cleared.'
-            ];
-        }
-        catch (\Throwable $e)
-        {
-            return [
-                'success' => false,
-                'message' => $e->getMessage()
-            ];
-        }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
-use SavvyAI\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
+use SavvyAI\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('@{trainable:handle}', [ChatController::class, 'show'])->name('chat.show');
-Route::post('@{trainable:handle}', [ChatController::class, 'ask'])->name('chat.ask');
-Route::post('@{trainable:handle}/history', [ChatController::class, 'history'])->name('chat.history');
-Route::post('@{trainable:handle}/clear', [ChatController::class, 'clear'])->name('chat.clear');
+// Demo Chat
+Route::prefix(config('savvy-ai.path'))->group(function () {
+    Route::get('/{trainable:handle}', [ChatController::class, 'show'])->name('demo.chat');
+    Route::post('/{trainable:handle}', [ChatController::class, 'ask'])->name('demo.chat.ask');
+    Route::post('/{trainable:handle}/history', [ChatController::class, 'history'])->name('demo.chat.history');
+});

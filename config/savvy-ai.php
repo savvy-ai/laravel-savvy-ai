@@ -1,13 +1,15 @@
 <?php
 
 return [
+    'path' => env('AI_PACKAGE_PATH', 'ai'),
+
     'snippets' => [
         'namespace' => '\\App\\Snippets',
     ],
 
     'drivers' => [
-        'ai'     => env('AI_DRIVER', 'openai'),
-        'sms'    => env('SMS_DRIVER', 'twilio'),
+        'ai' => env('AI_DRIVER', 'openai'),
+        'sms' => env('SMS_DRIVER', 'twilio'),
         'vector' => env('VECTOR_DRIVER', 'pinecone'),
     ],
 
@@ -32,9 +34,9 @@ return [
     ],
 
     'twilio' => [
-        'sid'      => env('TWILIO_ACCOUNT_SID'),
-        'token'    => env('TWILIO_AUTH_TOKEN'),
-        'phone'    => env('TWILIO_PHONE_NUMBER'),
+        'sid' => env('TWILIO_ACCOUNT_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        'phone' => env('TWILIO_PHONE_NUMBER'),
         'whatsapp' => env('TWILIO_WHATSAPP_NUMBER'),
     ],
 ];
