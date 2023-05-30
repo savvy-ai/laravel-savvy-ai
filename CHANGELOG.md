@@ -2,12 +2,31 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.6.3] - 2023-05-26
+
+### Updated
+- Updated the way media links are generated to be more relevant
+- Updated media links in rich replies to be at most 3
+
+---
+## [0.6.2] - 2023-05-25
+
+### Added
+- Added support for generating replies that include media (links) to be rendered along with the message
+
+---
+## [0.6.1] - 2023-05-23
+
+### Updated
+- Updated classification prompt to reduce the chances of hallucinating delegates
+- Updated reply generation with reply validation for unknown context and off-topic inspection
+
+---
 ## [0.6.0] - 2023-05-01
 
 ### Added
 - Added snippet resolver injection with a more specific name to avoid collisions
 - Added support for summarizing for training or splitting with a delimiter
-- 
 
 ### Updated
 - Updated AIServiceContract signature to only require text

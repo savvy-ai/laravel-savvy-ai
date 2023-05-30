@@ -69,7 +69,7 @@ class Chat extends Model implements ChatContract
         // Save messages to history
         foreach ($this->getMessages() as $message)
         {
-            $message = $message->asArray();
+            $message = $message->asPersistable();
 
             $message['dialogue_id'] = $dialogueId;
 

@@ -2,8 +2,6 @@
 
 namespace SavvyAI\Snippets;
 
-use SavvyAI\Contracts\SnippetResolverContract;
-
 abstract class Snippet
 {
     public function __construct(array $attributes = [])
@@ -17,5 +15,5 @@ abstract class Snippet
         }
     }
 
-    abstract public function use(string $input): string;
+    abstract public function use(string $input): Expanded;
 }

@@ -24,4 +24,9 @@ interface ChatMessageContract
      * @return array<string, string>
      */
     public function asArray(): array;
+
+    /**
+     * @return array<string, string>
+     */
+    public function asPersistable(): array;
 }

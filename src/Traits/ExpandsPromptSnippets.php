@@ -5,8 +5,8 @@ namespace SavvyAI\Traits;
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
-use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Contracts\SnippetResolverContract;
+use SavvyAI\Snippets\Expanded;
 use SavvyAI\Snippets\Snippet;
 
 trait ExpandsPromptSnippets
@@ -28,38 +28,13 @@ trait ExpandsPromptSnippets
      * @param string $prompt
      * @param string $input
      *
-     * @return string
+     * @return Expanded
      */
-    public function expandPrompt(string $prompt, string $input = ''): string
+    public function expand(string $prompt, string $input = ''): Expanded
     {
-        return $this->expand($prompt, $input);
-    }
+        $expanded = new Expanded($prompt, []);
 
-    /**
-     * @param ChatReplyContract $reply
-     * @param string $input
-     *
-     * @return ChatReplyContract
-     *
-     */
-    public function expandReply(ChatReplyContract $reply, string $input = ''): ChatReplyContract
-    {
-        $media = $this->expand($reply->content(), $input);
-
-        $reply->media($media);
-
-        return $reply;
-    }
-
-    /**
-     * @param string $text
-     * @param string $input
-     *
-     * @return string|array
-     */
-    public function expand(string $text, string $input = ''): string|array
-    {
-        preg_match_all(self::SNIPPET_REGEX, $text, $matches, PREG_SET_ORDER);
+        preg_match_all(self::SNIPPET_REGEX, $prompt, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match)
         {
@@ -79,7 +54,10 @@ trait ExpandsPromptSnippets
                     ? $this->snippetResolver->resolve($snippet, $attributes)
                     : $this->resolveSnippet($snippet, $attributes);
 
-                $text = str_replace($match[0], $snippet->use($input), $text);
+                $used = $snippet->use($input);
+
+                $expanded->text = str_replace($match[0], $used->text, $expanded->text);
+                $expanded->media = array_merge($expanded->media, $used->media);
             }
             catch (Exception $e)
             {
@@ -87,7 +65,7 @@ trait ExpandsPromptSnippets
             }
         }
 
-        return $text;
+        return $expanded;
     }
 
     /**
