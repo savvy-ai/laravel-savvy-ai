@@ -160,7 +160,7 @@ EOT;
      *
      * @return ChatReplyContract
      *
-     * @throws UnknownContextException
+     * @throws UnknownContextException|OffTopicException
      */
     public function chat(array $messages = []): ChatReplyContract
     {
@@ -180,10 +180,15 @@ EOT;
 
         $reply = ChatReply::fromAIServiceResponse((array) $response);
 
-        if ($reply->isContextUnknown())
-        {
-            throw new UnknownContextException($reply->content());
-        }
+       if ($reply->isContextUnknown())
+       {
+           throw new UnknownContextException($reply->content());
+       }
+
+       if (!$reply->isOnTopic())
+       {
+           throw new OffTopicException($reply->content());
+       }
 
         return $reply;
     }
