@@ -10,9 +10,9 @@ use SavvyAI\Exceptions\MissingApiKeyException;
 
 class Provider extends \Illuminate\Support\ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        $this->app->singleton(SavvyAI::class, static fn () => new SavvyAI());
+        $this->app->singleton(SavvyAI::class, static fn() => new SavvyAI());
 
         $this->app->singleton(Client::class, static function () {
             $driver = Config::get('savvy-ai.drivers.ai');
@@ -20,7 +20,7 @@ class Provider extends \Illuminate\Support\ServiceProvider
             $key = Config::get(sprintf('savvy-ai.%s.key', $driver));
             $org = Config::get(sprintf('savvy-ai.%s.org', $driver));
 
-            if (! is_string($key) || ($org !== null && ! is_string($org)))
+            if (!is_string($key) || ($org !== null && !is_string($org)))
             {
                 throw MissingApiKeyException::create();
             }
@@ -48,14 +48,19 @@ class Provider extends \Illuminate\Support\ServiceProvider
         ];
     }
 
-    public function boot()
+    public function boot(): void
     {
-        $this->registerPublishing();
         $this->registerRoutes();
         $this->registerCommands();
+        $this->registerPublishing();
     }
 
-    public function registerCommands()
+    public function registerRoutes(): void
+    {
+        $this->loadRoutesFrom(sprintf('%s/../routes/web.php', __DIR__));
+    }
+
+    public function registerCommands(): void
     {
         if ($this->app->runningInConsole())
         {
@@ -73,26 +78,29 @@ class Provider extends \Illuminate\Support\ServiceProvider
         }
     }
 
-    public function registerRoutes()
-    {
-        $this->loadRoutesFrom(sprintf('%s/../routes/web.php', __DIR__));
-    }
-
-    public function registerPublishing()
+    public function registerPublishing(): void
     {
         $this->publishes([
             __DIR__ . '/../config/savvy-ai.php' => config_path('savvy-ai.php'),
         ], 'savvy-ai-config');
 
         $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
-            __DIR__.'/../database/seeders' => database_path('seeders')
-        ], 'savvy-ai-migrations');
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+            __DIR__ . '/../database/seeders' => database_path('seeders')
+        ], 'savvy-ai-database');
 
         $this->publishes([
-            __DIR__.'/../filament/Resources' => app_path('Filament/Resources'),
-            __DIR__.'/../resources/views/filament' => resource_path('views/filament'),
-            __DIR__.'/../resources/views/vendor' => resource_path('views/vendor'),
+            __DIR__ . '/../filament/Resources' => app_path('Filament/Resources'),
+            __DIR__ . '/../resources/views/filament' => resource_path('views/filament'),
+            __DIR__ . '/../resources/views/vendor' => resource_path('views/vendor'),
         ], 'savvy-ai-filament');
+
+        $this->publishes([
+            __DIR__ . '/../resources/js' => resource_path('js'),
+        ], 'savvy-ai-js');
+
+        $this->publishes([
+            __DIR__ . '/../public' => public_path(),
+        ], 'savvy-ai-public');
     }
 }
