@@ -78,7 +78,7 @@ EOT;
 
         if ($reply->isContextUnknown($expectedStringInReply))
         {
-            throw new DelegateNotFoundException($reply->content());
+            throw new DelegateNotFoundException();
         }
 
         return $reply;
@@ -129,12 +129,12 @@ EOT;
 
        if ($reply->isContextUnknown())
        {
-           throw new DelegateNotFoundException($reply->content());
+           throw new DelegateNotFoundException();
        }
 
        if (!$reply->isOnTopic())
        {
-           throw new OffTopicException($reply->content());
+           throw new OffTopicException();
        }
 
         return $reply;
@@ -182,12 +182,12 @@ EOT;
 
        if ($reply->isContextUnknown())
        {
-           throw new DelegateNotFoundException($reply->content());
+           throw new DelegateNotFoundException();
        }
 
        if (!$reply->isOnTopic())
        {
-           throw new OffTopicException($reply->content());
+           throw new OffTopicException();
        }
 
         return $reply;
