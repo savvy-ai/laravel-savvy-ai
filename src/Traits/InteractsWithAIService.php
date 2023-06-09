@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Exceptions\OffTopicException;
-use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Exceptions\DelegateNotFoundException;
 use SavvyAI\Features\Chatting\ChatReply;
 use SavvyAI\Features\Chatting\Role;
 
@@ -51,7 +51,7 @@ EOT;
      *
      * @return ChatReplyContract
      *
-     * @throws UnknownContextException
+     * @throws DelegateNotFoundException
      */
     public function classify(string $text, array $subjects = [], string $expectedStringInReply = null): ChatReplyContract
     {
@@ -78,7 +78,7 @@ EOT;
 
         if ($reply->isContextUnknown($expectedStringInReply))
         {
-            throw new UnknownContextException($reply->content());
+            throw new DelegateNotFoundException($reply->content());
         }
 
         return $reply;
@@ -90,7 +90,7 @@ EOT;
      *
      * @return ChatReplyContract
      *
-     * @throws UnknownContextException|OffTopicException
+     * @throws DelegateNotFoundException|OffTopicException
      */
     public function validate(string $text, string $topic): ChatReplyContract
     {
@@ -106,7 +106,7 @@ EOT;
      *
      * @return ChatReplyContract
      *
-     * @throws UnknownContextException|OffTopicException
+     * @throws DelegateNotFoundException|OffTopicException
      */
     public function validateWithMessages(array $messages, string $topic): ChatReplyContract
     {
@@ -129,7 +129,7 @@ EOT;
 
        if ($reply->isContextUnknown())
        {
-           throw new UnknownContextException($reply->content());
+           throw new DelegateNotFoundException($reply->content());
        }
 
        if (!$reply->isOnTopic())
@@ -160,7 +160,7 @@ EOT;
      *
      * @return ChatReplyContract
      *
-     * @throws UnknownContextException|OffTopicException
+     * @throws DelegateNotFoundException|OffTopicException
      */
     public function chat(array $messages = []): ChatReplyContract
     {
@@ -182,7 +182,7 @@ EOT;
 
        if ($reply->isContextUnknown())
        {
-           throw new UnknownContextException($reply->content());
+           throw new DelegateNotFoundException($reply->content());
        }
 
        if (!$reply->isOnTopic())
