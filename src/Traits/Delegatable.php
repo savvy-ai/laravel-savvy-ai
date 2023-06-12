@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatMessageContract;
-use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Exceptions\DelegateNotFoundException;
 
 trait Delegatable
 {
@@ -69,7 +69,7 @@ trait Delegatable
     }
 
     /**
-     * @throws UnknownContextException
+     * @throws DelegateNotFoundException
      */
     public function delegate(ChatContract $chat): ChatMessageContract
     {

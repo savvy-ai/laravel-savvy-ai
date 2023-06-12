@@ -4,7 +4,7 @@ namespace SavvyAI\Commands\Test\Chatting;
 
 use Illuminate\Console\Command;
 use SavvyAI\DummyForChatting;
-use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Exceptions\DelegateNotFoundException;
 
 class SavvyClassify extends Command
 {
@@ -50,7 +50,7 @@ class SavvyClassify extends Command
                     '@',
                 )->content();
             }
-            catch (UnknownContextException $e)
+            catch (DelegateNotFoundException $e)
             {
                 $this->error('Output: ' . $e->getMessage());
 
