@@ -63,7 +63,7 @@ trait Chatable
 
             return new ChatMessage(
                 Role::Assistant,
-                'Sorry, we are having issues contacting our AI service. Please try again later.',
+                'We\'re experiencing issues with our AI service. Please try again later. We apologize for the inconvenience.',
             );
         }
         catch (Throwable $throwable)
@@ -72,7 +72,7 @@ trait Chatable
 
             return new ChatMessage(
                 Role::Assistant,
-                'Oops, something went wrong on our end. Please try again later.',
+                'Something went wrong. Please try again later. We\'re sorry for any inconvenience.',
             );
         }
     }

@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Blade;
 use SavvyAI\DummyForChatting;
 use SavvyAI\DummyForExpanding;
-use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Exceptions\DelegateNotFoundException;
 use SavvyAI\Savvy;
 
 class SavvyChat extends Command
@@ -76,7 +76,7 @@ class SavvyChat extends Command
             {
                 $output = Savvy::chat($history)->content();
             }
-            catch (UnknownContextException $e)
+            catch (DelegateNotFoundException $e)
             {
                 $this->error('Output: ' . $e->getMessage());
 
