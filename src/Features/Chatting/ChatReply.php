@@ -55,7 +55,7 @@ class ChatReply implements ChatReplyContract
 
     public function isOnTopic(): bool
     {
-        return mb_stripos($this->content(), '@OnTopic') !== false;
+        return mb_stripos($this->content(), '@OffTopic') === false;
     }
 
     public function isContextUnknown(string $expected = null): bool
