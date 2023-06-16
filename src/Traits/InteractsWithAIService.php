@@ -185,6 +185,11 @@ EOT;
             throw new DelegateNotFoundException();
         }
 
+        if (!$reply->isOnTopic())
+        {
+            throw new OffTopicException($reply->content());
+        }
+
         return $reply;
     }
 }
