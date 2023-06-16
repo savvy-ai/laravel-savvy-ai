@@ -8,7 +8,7 @@ use SavvyAI\Contracts\ChatContract;
 use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Exceptions\OffTopicException;
-use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Exceptions\DelegateNotFoundException;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
 use SavvyAI\Traits\Delegatable;
@@ -69,7 +69,7 @@ class Dialogue extends Model implements ChatDelegateContract
     }
 
     /**
-     * @throws UnknownContextException
+     * @throws DelegateNotFoundException
      * @throws OffTopicException
      * @throws Exception
      */

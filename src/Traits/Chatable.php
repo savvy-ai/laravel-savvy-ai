@@ -10,7 +10,7 @@ use SavvyAI\Contracts\ChatDelegateContract;
 use SavvyAI\Contracts\ChatMessageContract;
 use SavvyAI\Contracts\ChatReplyContract;
 use SavvyAI\Exceptions\OffTopicException;
-use SavvyAI\Exceptions\UnknownContextException;
+use SavvyAI\Exceptions\DelegateNotFoundException;
 use SavvyAI\Features\Chatting\ChatMessage;
 use SavvyAI\Features\Chatting\Role;
 use Throwable;
@@ -45,7 +45,7 @@ trait Chatable
         {
             return $this->replyWithoutCatching($delegate, $message);
         }
-        catch (UnknownContextException|OffTopicException $e)
+        catch (DelegateNotFoundException|OffTopicException $e)
         {
             $this->clearMessages();
 
@@ -63,7 +63,7 @@ trait Chatable
 
             return new ChatMessage(
                 Role::Assistant,
-                'Sorry, we are having issues contacting our AI service. Please try again later.',
+                'We\'re experiencing issues with our AI service. Please try again later. We apologize for the inconvenience.',
             );
         }
         catch (Throwable $throwable)
@@ -72,7 +72,7 @@ trait Chatable
 
             return new ChatMessage(
                 Role::Assistant,
-                'Oops, something went wrong on our end. Please try again later.',
+                'Something went wrong. Please try again later. We\'re sorry for any inconvenience.',
             );
         }
     }
