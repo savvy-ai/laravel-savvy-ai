@@ -2,6 +2,18 @@
 Domain knowledge artificial intelligence framework for Laravel
 
 ---
+## [0.6.4] - 2023-06-16
+
+### Updated
+- Improved exception messages
+
+### Fixed
+- Fixed bug in `ChatReply::isOnTopic()` that would cause some messages to be incorrectly flagged off-topic
+
+### Removed
+- Removed deprecated exceptions
+
+---
 ## [0.6.3] - 2023-05-26
 
 ### Updated
